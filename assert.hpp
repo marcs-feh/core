@@ -30,15 +30,19 @@ void panic_assert(bool expr, const char* msg){
 	}
 }
 
+#ifndef RELEASE_MODE
 static inline
 void debug_assert(bool expr, const char* msg){
-#ifndef RELEASE_MODE
 	if(!expr){
 		fprintf(stderr, "Failed assert: %s\n", msg);
 		Abort_Program();
 	}
-#endif
 }
+#else
+static inline
+void debug_assert(bool, const char*){}
+#endif
+
 }
 
 #endif /* Include guard */
