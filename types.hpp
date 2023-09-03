@@ -26,8 +26,7 @@ using byte    = unsigned char;
 using rune    = uint32_t;
 using uintptr = uintptr_t;
 
-namespace core {
-
+namespace core::limits {
 constexpr u8  u8_max  = 0xff;
 constexpr u16 u16_max = 0xffff;
 constexpr u32 u32_max = 0xffff'ffffULL;
@@ -42,7 +41,6 @@ constexpr i8  i8_min  = -0x80;
 constexpr i16 i16_min = -0x8000;
 constexpr i32 i32_min = -0x8000'0000LL;
 constexpr i64 i64_min = -0x8000'0000'0000'0000LL;
-
 }
 
 static_assert(sizeof(float) == 4, "`float` must be 32 bit");

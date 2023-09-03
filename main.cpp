@@ -7,5 +7,6 @@
 #include "print.hh"
 
 int main(){
+	print();
 	return 0;
 }
