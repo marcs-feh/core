@@ -5,40 +5,26 @@
 
 #include "types.hpp"
 
-namespace context {
+namespace core::platform {
 
-enum struct OS {
-	Linux, OpenBSD, FreeBSD, Windows,
+enum struct OS : u8 {
+	Linux, OpenBSD, Windows,
 };
 
 constexpr OS os =
 #if defined(__linux__)
-	OS::Linux
+	OS::Linux;
 #elif defined(_WIN32)
-	OS::Windows
+	OS::Windows;
 #elif defined(__OpenBSD__)
-	OS::OpenBSD
-#elif defined(__FreeBSD__)
-	OS::FreeBSD
+	OS::OpenBSD;
 #endif
-;
 
-constexpr auto os_name =
-#if defined(__linux__)
-	"Linux"
-#elif defined(_WIN32)
-	"Windows"
-#elif defined(__OpenBSD__)
-	"OpenBSD"
-#elif defined(__FreeBSD__)
-	"FreeBSD"
-#endif
-;
-
+constexpr usize posix_version = 
 #if defined(_POSIX_VERSION)
-constexpr usize posix_version = _POSIX_VERSION;
+	_POSIX_VERSION;
 #else
-constexpr usize posix_version = 0;
+	0;
 #endif
 
 }
