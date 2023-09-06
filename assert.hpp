@@ -30,7 +30,7 @@ void panic_assert(bool expr, const char* msg){
 	}
 }
 
-#ifndef RELEASE_MODE
+#ifndef NO_DEBUG_ASSERT
 static inline
 void debug_assert(bool expr, const char* msg){
 	if(!expr){
