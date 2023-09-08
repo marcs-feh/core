@@ -3,9 +3,9 @@
 
 #include "types.hpp"
 #include "slice.hpp"
-#include "assert.hpp"
 
 #ifndef NO_BOUNDS_CHECK
+#include "assert.hpp"
 #define Bounds_Check(expr_) panic_assert((expr_), "Index out of bounds")
 #else
 #define Bounds_Check(expr_)

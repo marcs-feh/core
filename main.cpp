@@ -3,13 +3,15 @@
 #include "utils.hpp"
 #include "assert.hpp"
 #include "context.hpp"
+
 #include "slice.hpp"
 #include "view.hpp"
+#include "array.hpp"
 
 #include "print.hh"
 
-#include  "tests/slice.cpp"
-#include  "tests/view.cpp"
+#include "tests/slice.cpp"
+#include "tests/view.cpp"
 
 int main(){
 	test_Slice();
