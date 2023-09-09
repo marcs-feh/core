@@ -8,4 +8,8 @@
 #define NO_BOUNDS_CHECK 1
 #endif
 
+#if __cplusplus < 202002L
+#define NO_CONCEPTS 1
+#endif
+
 #endif /* Include guard */

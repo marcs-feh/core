@@ -1,10 +1,12 @@
 #ifndef _utils_hpp_include_
 #define _utils_hpp_include_
 
+#include "config.hpp"
+
 namespace core {
 
+namespace typing {
 
-namespace detail {
 template<typename T>
 struct RemoveReferenceType {typedef T Type; };
 template<typename T>
@@ -39,13 +41,13 @@ struct IsRValueReference<T&&> : True_Type {};
 }
 
 template<typename T>
-using RemoveReference = typename detail::RemoveReferenceType<T>::Type;
+using RemoveReference = typename typing::RemoveReferenceType<T>::Type;
 
 template<typename T>
-constexpr bool is_lvalue_ref = detail::IsLValueReference<T>::value;
+constexpr bool is_lvalue_ref = typing::IsLValueReference<T>::value;
 
 template<typename T>
-constexpr bool is_rvalue_ref = detail::IsRValueReference<T>::value;
+constexpr bool is_rvalue_ref = typing::IsRValueReference<T>::value;
 
 // Cast x to rvalue reference
 template<typename T>
