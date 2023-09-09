@@ -118,6 +118,43 @@ Array<T,N> operator/(const Array<T,N>& a, const S& b){
 	return v;
 }
 
+template<typename T, usize N, typename... Args>
+auto pack_to_array(){}
+
+
+template<typename T, usize N, usize I>
+constexpr
+void set_arr(Array<T, N>& v, const T& elem){
+	static_assert(I < N, "Out of bounds");
+	v[I] = elem;
+}
+
+template<typename T, usize N, usize I = 0, typename... Args>
+constexpr
+void set_arr(Array<T, N>& v, const T& elem, Args&& ...elems){
+	static_assert(I < N, "Out of bounds");
+	static_assert(sizeof...(elems) < N, "Excess elements");
+	v[I] = elem;
+	set_arr<T, N, I+1>(v, elems...);
+}
+
+
+template<typename T, usize N, typename... Index>
+constexpr
+auto swizzle(Array<T, N>& v, Index&& ...indices){
+	static_assert(sizeof...(indices) < N, "Excess elements");
+	constexpr usize L  = sizeof...(indices);
+	Array<T, L> idxv; 
+	Array<T, L> res;
+
+	set_arr(idxv, indices...);
+	for(usize i = 0; i < L; i += 1){
+		res[i] = v[idxv[i]];
+	}
+
+	return res;
+}
+
 template<typename T, usize N>
 T sum(const Array<T,N>& v){
 	T s{0};
