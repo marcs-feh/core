@@ -22,18 +22,17 @@ static void print_arr(U&& v){
 	std::cout << "]\n";
 }
 
+using namespace core;
 
 int main(){
-	// test_Slice();
-	// test_View();
+	test_Slice();
+	test_View();
 
-	auto v = core::Array<int,4>{3, 1, -2, 4};
-	print_arr(v);
-	auto a = core::swizzle(v, 0, 1, 0);
-	print_arr(a);
+	auto a = Array<int,4>{0, 9, 2, 4};
+	print_arr(a); // [ 0 9 2 4 ]
 
-	// auto e = core::swizzle(v, 0, 12);
-	// print(e.len());
+	auto b = swizzle(a, 3, 2, 0);
+	print_arr(b); // [ 4 2 0 ]
 
 	return 0;
 }
