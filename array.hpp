@@ -3,6 +3,7 @@
 
 // TODO: Concepts?
 
+// TODO: use constexpr newton raphson maybe?
 #include <cmath>
 
 #include "types.hpp"
