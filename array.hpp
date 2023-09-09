@@ -3,6 +3,8 @@
 
 // TODO: Concepts?
 
+#include <cmath>
+
 #include "types.hpp"
 
 #ifndef NO_BOUNDS_CHECK
@@ -16,18 +18,23 @@ namespace core {
 
 constexpr usize max_array_size = 8192;
 
+
 template<typename T, usize N>
 struct Array {
 	T data[N];
 
+	constexpr
 	usize len() const { return N; }
 
+	constexpr
 	T& operator[](usize idx){
-		Bounds_Check(idx < N);
+		// Bounds_Check(idx < N);
 		return data[idx];
 	}
+
+	constexpr
 	const T& operator[](usize idx) const{
-		Bounds_Check(idx < N);
+		// Bounds_Check(idx < N);
 		return data[idx];
 	}
 
@@ -38,6 +45,7 @@ struct Array {
 /// Vector operations ///
 
 template<typename T, usize N>
+constexpr
 Array<T,N> operator+(const Array<T,N>& a, const Array<T,N>& b){
 	Array<T, N> v;
 	for(usize i = 0; i < N; i += 1){
@@ -47,6 +55,7 @@ Array<T,N> operator+(const Array<T,N>& a, const Array<T,N>& b){
 }
 
 template<typename T, usize N>
+constexpr
 Array<T,N> operator-(const Array<T,N>& a, const Array<T,N>& b){
 	Array<T, N> v;
 	for(usize i = 0; i < N; i += 1){
@@ -56,6 +65,7 @@ Array<T,N> operator-(const Array<T,N>& a, const Array<T,N>& b){
 }
 
 template<typename T, usize N>
+constexpr
 Array<T,N> operator/(const Array<T,N>& a, const Array<T,N>& b){
 	Array<T, N> v;
 	for(usize i = 0; i < N; i += 1){
@@ -66,6 +76,7 @@ Array<T,N> operator/(const Array<T,N>& a, const Array<T,N>& b){
 }
 
 template<typename T, usize N>
+constexpr
 Array<T,N> operator*(const Array<T,N>& a, const Array<T,N>& b){
 	Array<T, N> v;
 	for(usize i = 0; i < N; i += 1){
@@ -75,6 +86,7 @@ Array<T,N> operator*(const Array<T,N>& a, const Array<T,N>& b){
 }
 
 template<typename T, usize N>
+constexpr
 bool operator==(const Array<T,N>& a, const Array<T,N>& b){
 	for(usize i = 0; i < N; i += 1){
 		if(a.data[i] != b.data[i]){ return false; }
@@ -85,6 +97,7 @@ bool operator==(const Array<T,N>& a, const Array<T,N>& b){
 /// Scalar operations ///
 
 template<typename T, usize N, typename S>
+constexpr
 Array<T,N> operator+(const Array<T,N>& a, const S& b){
 	Array<T, N> v;
 	for(usize i = 0; i < N; i += 1){
@@ -94,6 +107,7 @@ Array<T,N> operator+(const Array<T,N>& a, const S& b){
 }
 
 template<typename T, usize N, typename S>
+constexpr
 Array<T,N> operator-(const Array<T,N>& a, const S& b){
 	Array<T, N> v;
 	for(usize i = 0; i < N; i += 1){
@@ -103,6 +117,7 @@ Array<T,N> operator-(const Array<T,N>& a, const S& b){
 }
 
 template<typename T, usize N, typename S>
+constexpr
 Array<T,N> operator*(const Array<T,N>& a, const S& b){
 	Array<T, N> v;
 	for(usize i = 0; i < N; i += 1){
@@ -112,6 +127,7 @@ Array<T,N> operator*(const Array<T,N>& a, const S& b){
 }
 
 template<typename T, usize N, typename S>
+constexpr
 Array<T,N> operator/(const Array<T,N>& a, const S& b){
 	Array<T, N> v;
 	for(usize i = 0; i < N; i += 1){
@@ -130,17 +146,15 @@ void set_arr_from_param_pack(Array<T, N>& v, const T& elem){
 
 template<typename T, usize N, usize I = 0, typename... Args>
 constexpr
-void set_arr_from_param_pack(Array<T, N>& v, const T& elem, Args&& ...elems){
+void set_arr_from_param_pack(Array<T, N>& v, const T& elem, Args&& ...indices){
 	static_assert(I < N, "Out of bounds");
-	static_assert(sizeof...(elems) < N, "Excess elements");
 	v[I] = elem;
-	set_arr_from_param_pack<T, N, I+1>(v, elems...);
+	set_arr_from_param_pack<T, N, I+1>(v, indices...);
 }
 
 template<typename T, usize N, typename... Index>
 constexpr
-auto swizzle(Array<T, N>& v, Index&& ...indices){
-	static_assert(sizeof...(indices) < N, "Excess elements");
+auto swizzle(const Array<T, N>& v, Index&& ...indices){
 	constexpr usize L  = sizeof...(indices);
 	Array<T, L> idxv;
 	Array<T, L> res;
@@ -154,6 +168,7 @@ auto swizzle(Array<T, N>& v, Index&& ...indices){
 }
 
 template<typename T, usize N>
+constexpr
 T sum(const Array<T,N>& v){
 	T s{0};
 	for(usize i = 0; i < N; i += 1){
@@ -162,8 +177,15 @@ T sum(const Array<T,N>& v){
 	return s;
 }
 
+template<typename T, usize N>
+T mag(const Array<T,N>& v){
+	auto s = sum(v * v);
+	return std::sqrt(s);
+}
+
 
 template<typename T, usize N, typename VecFunc>
+constexpr
 Array<T, N> map(VecFunc&& f, const Array<T,N>& v){
 	Array<T, N> a;
 	for(usize i = 0; i < N; i += 1){

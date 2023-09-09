@@ -12,6 +12,7 @@
 
 #include "tests/slice.cpp"
 #include "tests/view.cpp"
+#include "tests/array.cpp"
 
 template<typename U>
 static void print_arr(U&& v){
@@ -27,12 +28,7 @@ using namespace core;
 int main(){
 	test_Slice();
 	test_View();
-
-	auto a = Array<int,4>{0, 9, 2, 4};
-	print_arr(a); // [ 0 9 2 4 ]
-
-	auto b = swizzle(a, 3, 2, 0);
-	print_arr(b); // [ 4 2 0 ]
+	test_Array();
 
 	return 0;
 }
