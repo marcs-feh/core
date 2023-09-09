@@ -19,7 +19,6 @@ namespace core {
 
 constexpr usize max_array_size = 8192;
 
-
 template<typename T, usize N>
 struct Array {
 	T data[N];
@@ -138,18 +137,18 @@ Array<T,N> operator/(const Array<T,N>& a, const S& b){
 }
 
 
-template<typename T, usize N, usize I>
+template<typename T, usize N, usize I, typename U>
 constexpr
-void set_arr_from_param_pack(Array<T, N>& v, const T& elem){
+void set_arr_from_param_pack(Array<T, N>& v, U&& elem){
 	static_assert(I < N, "Out of bounds");
-	v[I] = elem;
+	v[I] = static_cast<T>(elem);
 }
 
-template<typename T, usize N, usize I = 0, typename... Args>
+template<typename T, usize N, usize I = 0, typename U,typename... Args>
 constexpr
-void set_arr_from_param_pack(Array<T, N>& v, const T& elem, Args&& ...indices){
+void set_arr_from_param_pack(Array<T, N>& v, U&& elem, Args&& ...indices){
 	static_assert(I < N, "Out of bounds");
-	v[I] = elem;
+	v[I] = static_cast<T>(elem);
 	set_arr_from_param_pack<T, N, I+1>(v, indices...);
 }
 
@@ -157,7 +156,7 @@ template<typename T, usize N, typename... Index>
 constexpr
 auto swizzle(const Array<T, N>& v, Index&& ...indices){
 	constexpr usize L  = sizeof...(indices);
-	Array<T, L> idxv;
+	Array<usize, L> idxv;
 	Array<T, L> res;
 
 	set_arr_from_param_pack(idxv, indices...);
