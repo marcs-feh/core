@@ -5,7 +5,8 @@
 
 #include "types.hpp"
 
-namespace core::platform {
+namespace core {
+namespace platform {
 
 enum struct OS : u8 {
 	Linux, OpenBSD, Windows,
@@ -27,6 +28,6 @@ constexpr usize posix_version =
 	0;
 #endif
 
-}
+}}
 
 #endif /* Include guard */
