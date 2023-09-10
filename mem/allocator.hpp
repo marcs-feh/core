@@ -6,6 +6,7 @@
 #include "utils.hpp"
 #include "slice.hpp"
 #include "view.hpp"
+#include "mem/mem.hpp"
 
 #ifndef NO_CONCEPTS
 #include <concepts>
@@ -17,13 +18,6 @@ namespace core {
 
 
 struct Allocator {
-
-	enum struct Answer {
-		No = 0,
-		Yes = 1,
-		Cannot_Tell,
-	};
-
 	virtual void* alloc(usize nbytes) = 0;
 	virtual void* allocUndef(usize nbytes) = 0;
 	virtual bool hasAddress(void* p) = 0;

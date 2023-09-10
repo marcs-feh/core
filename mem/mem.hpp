@@ -7,6 +7,8 @@
 
 namespace core {
 
+constexpr uintptr max_align = alignof(std::max_align_t);
+
 // Set n bytes of ptr to v
 static inline
 void memSet(void* ptr, usize n, byte v){
@@ -44,7 +46,7 @@ void memCopy(void* dest, void* src, usize n){
 
 // Check if pointer is within 2 other addresses (inclusive), if `from` is bigger
 // than `to` this always returns false
-static constexpr
+static constexpr inline
 bool ptrInRange(uintptr from, uintptr p, uintptr to){
 	return (p >= from) && (p <= to);
 }

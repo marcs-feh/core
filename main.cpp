@@ -4,6 +4,7 @@
 #include "defer.hpp"
 #include "assert.hpp"
 #include "context.hpp"
+#include "mem/bump_allocator.hpp"
 
 #include "slice.hpp"
 #include "view.hpp"
@@ -32,11 +33,16 @@ int main(){
 	test_View();
 	test_Array();
 	test_LibCAllocator();
-	auto libc = LibCAllocator();
-	Allocator& p = libc;
+
+	auto buf = Slice<byte>(new byte[4000], 4000);
+	defer(delete[] buf.raw_ptr());
+
+	auto al = BumpAllocator(buf);
+
+	Allocator& p = al;
 
 	auto n = p.alloc(100);
-	defer(p.free(n));
+	defer(p.freeAll());
 
 	return 0;
 }
