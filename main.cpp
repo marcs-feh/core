@@ -32,6 +32,11 @@ int main(){
 	test_View();
 	test_Array();
 	test_LibCAllocator();
+	auto libc = LibCAllocator();
+	Allocator& p = libc;
+
+	auto n = p.alloc(100);
+	defer(p.free(n));
 
 	return 0;
 }

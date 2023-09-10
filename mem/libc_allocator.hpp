@@ -8,26 +8,31 @@
 #include <cstdlib>
 
 namespace core{
-struct LibCAllocator {
 
-	void* alloc(usize n){
+// TODO: proper impl
+struct LibCAllocator : public Allocator {
+	void* alloc(usize n) override {
 		void* p = allocUndef(n);
 		memSet(p, n, 0);
 		return p;
 	}
 
-	void* allocUndef(usize n){
+	void* allocUndef(usize n) override {
 		return std::malloc(n);
 	}
 
-	void free(void* ptr){
+	void free(void* ptr) override {
 		std::free(ptr);
 	}
 
-	void freeAll(){
-		panic("freeAll not supportted");
+	void freeAll() override {
+		panic("freeAll() not supportted");
 	}
 
+	bool hasAddress(void*) override {
+		panic("hasAddress() not supportted");
+		return false;
+	}
 };
 }
 

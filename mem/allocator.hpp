@@ -15,17 +15,25 @@ void* operator new(usize, void*) noexcept;
 
 namespace core {
 
-template<typename AllocType>
-concept AllocatorLike = requires(AllocType al, void* rawptr, usize n){
-{ al.alloc(n) } -> std::same_as<void*>;
-{ al.allocUndef(n) } -> std::same_as<void*>;
-{ al.free(rawptr) } -> std::same_as<void>;
-{ al.freeAll() } -> std::same_as<void>;
-// { al.realloc(rawptr, n) } -> std::same_as<void*>;
+
+struct Allocator {
+
+	enum struct Answer {
+		No = 0,
+		Yes = 1,
+		Cannot_Tell,
+	};
+
+	virtual void* alloc(usize nbytes) = 0;
+	virtual void* allocUndef(usize nbytes) = 0;
+	virtual bool hasAddress(void* p) = 0;
+	virtual void free(void* p) = 0;
+	virtual void freeAll() = 0;
+	// void* realloc(void* p, usize old_size, usize new_size);
 };
 
 template<typename T>
-T* make(AllocatorLike auto& al){
+T* make(Allocator& al){
 	T* p = static_cast<T*>(al.alloc(sizeof(T)));
 	if(p != nullptr){
 		new (p) T;
@@ -34,7 +42,7 @@ T* make(AllocatorLike auto& al){
 }
 
 template<typename T, typename... CtorArgs>
-T* make(AllocatorLike auto& al, CtorArgs&& ...args){
+T* make(Allocator& al, CtorArgs&& ...args){
 	T* p = static_cast<T*>(al.alloc(sizeof(T)));
 	if(p != nullptr){
 		new (p) T(core::forward<CtorArgs...>(args)...);
@@ -43,7 +51,7 @@ T* make(AllocatorLike auto& al, CtorArgs&& ...args){
 }
 
 template<typename T>
-Slice<T> makeSlice(AllocatorLike auto& al, usize n){
+Slice<T> makeSlice(Allocator& al, usize n){
 	T* p = static_cast<T*>(al.alloc(sizeof(T) * n));
 
 	if(p != nullptr){
@@ -56,13 +64,13 @@ Slice<T> makeSlice(AllocatorLike auto& al, usize n){
 }
 
 template<typename T>
-View<T> makeView(AllocatorLike auto& al, usize n){
+View<T> makeView(Allocator& al, usize n){
 	auto s = makeSlice<T>(al, n);
 	return View(s);
 }
 
 template<typename T, typename... CtorArgs>
-Slice<T> makeSlice(AllocatorLike auto& al, usize n, CtorArgs&& ...args){
+Slice<T> makeSlice(Allocator& al, usize n, CtorArgs&& ...args){
 	T* p = static_cast<T*>(al.alloc(sizeof(T) * n));
 
 	if(p != nullptr){
@@ -75,14 +83,14 @@ Slice<T> makeSlice(AllocatorLike auto& al, usize n, CtorArgs&& ...args){
 }
 
 template<typename T, typename... CtorArgs>
-View<T> makeView(AllocatorLike auto& al, usize n, CtorArgs&& ...args){
+View<T> makeView(Allocator& al, usize n, CtorArgs&& ...args){
 	auto s = makeSlice<T>(al, n, core::forward<CtorArgs...>(args)...);
 	return View(s);
 }
 
 
 template<typename T>
-void destroy(AllocatorLike auto& al, T* ptr){
+void destroy(Allocator& al, T* ptr){
 	// TODO check ownership
 	if(ptr != nullptr){
 		ptr->~T();
@@ -91,7 +99,7 @@ void destroy(AllocatorLike auto& al, T* ptr){
 }
 
 template<typename T>
-void destroy(AllocatorLike auto& al, View<T> s){
+void destroy(Allocator& al, View<T> s){
 	// TODO check ownership
 	T* ptr = s.raw_ptr();
 	usize n = s.len();
@@ -107,7 +115,7 @@ void destroy(AllocatorLike auto& al, View<T> s){
 #endif /* NO_CONCEPTS */
 
 #ifdef NO_CONCEPTS
-#undef AllocatorLike
+#undef Allocator
 #endif
 
 #endif /* Include guard */
