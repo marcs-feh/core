@@ -1,6 +1,7 @@
 #include <unistd.h>
 
 #include "utils.hpp"
+#include "defer.hpp"
 #include "assert.hpp"
 #include "context.hpp"
 
