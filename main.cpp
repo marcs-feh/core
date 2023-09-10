@@ -13,6 +13,7 @@
 #include "tests/slice.cpp"
 #include "tests/view.cpp"
 #include "tests/array.cpp"
+#include "tests/libc_allocator.cpp"
 
 template<typename U>
 static void print_arr(U&& v){
@@ -29,6 +30,7 @@ int main(){
 	test_Slice();
 	test_View();
 	test_Array();
+	test_LibCAllocator();
 
 	return 0;
 }

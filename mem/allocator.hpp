@@ -5,10 +5,9 @@
 #include "types.hpp"
 #include "utils.hpp"
 #include "slice.hpp"
+#include "view.hpp"
 
-#ifdef NO_CONCEPTS
-#define AllocatorLike typename
-#else
+#ifndef NO_CONCEPTS
 #include <concepts>
 
 // Required so the compiler stops crying about it
@@ -22,13 +21,8 @@ concept AllocatorLike = requires(AllocType al, void* rawptr, usize n){
 { al.allocUndef(n) } -> std::same_as<void*>;
 { al.free(rawptr) } -> std::same_as<void>;
 { al.freeAll() } -> std::same_as<void>;
-{ al.realloc(rawptr, n) } -> std::same_as<void*>;
+// { al.realloc(rawptr, n) } -> std::same_as<void*>;
 };
-}
-
-#endif
-
-namespace core{
 
 template<typename T>
 T* make(AllocatorLike auto& al){
@@ -40,7 +34,7 @@ T* make(AllocatorLike auto& al){
 }
 
 template<typename T, typename... CtorArgs>
-T* make(AllocatorLike auto& al, CtorArgs ...args){
+T* make(AllocatorLike auto& al, CtorArgs&& ...args){
 	T* p = static_cast<T*>(al.alloc(sizeof(T)));
 	if(p != nullptr){
 		new (p) T(core::forward<CtorArgs...>(args)...);
@@ -61,9 +55,14 @@ Slice<T> makeSlice(AllocatorLike auto& al, usize n){
 	return Slice<T>(p, 0);
 }
 
+template<typename T>
+View<T> makeView(AllocatorLike auto& al, usize n){
+	auto s = makeSlice<T>(al, n);
+	return View(s);
+}
 
 template<typename T, typename... CtorArgs>
-Slice<T> makeSlice(AllocatorLike auto& al, usize n, CtorArgs ...args){
+Slice<T> makeSlice(AllocatorLike auto& al, usize n, CtorArgs&& ...args){
 	T* p = static_cast<T*>(al.alloc(sizeof(T) * n));
 
 	if(p != nullptr){
@@ -75,6 +74,13 @@ Slice<T> makeSlice(AllocatorLike auto& al, usize n, CtorArgs ...args){
 	return Slice<T>(p, 0);
 }
 
+template<typename T, typename... CtorArgs>
+View<T> makeView(AllocatorLike auto& al, usize n, CtorArgs&& ...args){
+	auto s = makeSlice<T>(al, n, core::forward<CtorArgs...>(args)...);
+	return View(s);
+}
+
+
 template<typename T>
 void destroy(AllocatorLike auto& al, T* ptr){
 	// TODO check ownership
@@ -85,7 +91,7 @@ void destroy(AllocatorLike auto& al, T* ptr){
 }
 
 template<typename T>
-void destroy(AllocatorLike auto& al, Slice<T> s){
+void destroy(AllocatorLike auto& al, View<T> s){
 	// TODO check ownership
 	T* ptr = s.raw_ptr();
 	usize n = s.len();
@@ -98,6 +104,7 @@ void destroy(AllocatorLike auto& al, Slice<T> s){
 }
 
 }
+#endif /* NO_CONCEPTS */
 
 #ifdef NO_CONCEPTS
 #undef AllocatorLike

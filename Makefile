@@ -1,4 +1,4 @@
-CXX=clang++ -std=c++14
+CXX=clang++ -std=c++20
 CXXFLAGS=-O1 -march=native -pipe -I. -Wall -Wextra
 
 .PHONY: run clean
