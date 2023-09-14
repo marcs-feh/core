@@ -1,5 +1,5 @@
 CXX=clang++ -std=c++20
-CXXFLAGS=-O1 -march=native -pipe -I. -Wall -Wextra
+CXXFLAGS=-O1 -march=native -pipe -I. -Wall -Wextra -fno-exceptions -fno-strict-aliasing
 
 .PHONY: run clean
 

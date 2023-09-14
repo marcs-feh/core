@@ -1,6 +1,8 @@
 #ifndef _defer_hpp_include_
 #define _defer_hpp_include_
 
+#include "utils.hpp"
+
 namespace core {
 namespace _defer_impl {
 template<typename F>

@@ -54,7 +54,7 @@ Slice<T> makeSlice(Allocator& al, usize n){
 		}
 	}
 
-	return Slice<T>(p, 0);
+	return Slice<T>(p, n);
 }
 
 template<typename T>

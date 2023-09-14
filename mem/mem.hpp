@@ -64,6 +64,24 @@ T alignForward(T p, T a){
 	return p;
 }
 
+template<typename U>
+constexpr usize kili(U&& v){ return v * 1024LL; }
+template<typename U>
+constexpr usize mebi(U&& v){ return v * 1024LL * 1024LL; }
+template<typename U>
+constexpr usize gibi(U&& v){ return v * 1024LL * 1024LL * 1024LL; }
+template<typename U>
+constexpr usize teri(U&& v){ return v * 1024LL * 1024LL * 1024LL * 1024LL; }
+
+template<typename U>
+constexpr U kilo(U&& v){ return v * 1000LL; }
+template<typename U>
+constexpr U mega(U&& v){ return v * 1000LL * 1000LL; }
+template<typename U>
+constexpr U giga(U&& v){ return v * 1000LL * 1000LL * 1000LL; }
+template<typename U>
+constexpr U tera(U&& v){ return v * 1000LL * 1000LL * 1000LL * 1000LL; }
+
 }
 
 

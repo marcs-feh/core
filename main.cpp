@@ -16,6 +16,7 @@
 #include "tests/view.cpp"
 #include "tests/array.cpp"
 #include "tests/libc_allocator.cpp"
+#include "tests/bump_allocator.cpp"
 
 template<typename U>
 static void print_arr(U&& v){
@@ -33,16 +34,7 @@ int main(){
 	test_View();
 	test_Array();
 	test_LibCAllocator();
-
-	auto buf = Slice<byte>(new byte[4000], 4000);
-	defer(delete[] buf.raw_ptr());
-
-	auto al = BumpAllocator(buf);
-
-	Allocator& p = al;
-
-	auto n = p.alloc(100);
-	defer(p.freeAll());
+	test_BumpAllocator();
 
 	return 0;
 }
