@@ -8,14 +8,10 @@
 #include "view.hpp"
 #include "mem/mem.hpp"
 
-#ifndef NO_CONCEPTS
-#include <concepts>
-
 // Required so the compiler stops crying about it
 void* operator new(usize, void*) noexcept;
 
 namespace core {
-
 
 struct Allocator {
 	virtual void* alloc(usize nbytes) = 0;
@@ -60,7 +56,7 @@ Slice<T> makeSlice(Allocator& al, usize n){
 template<typename T>
 View<T> makeView(Allocator& al, usize n){
 	auto s = makeSlice<T>(al, n);
-	return View(s);
+	return View<T>(s);
 }
 
 template<typename T, typename... CtorArgs>
@@ -79,7 +75,7 @@ Slice<T> makeSlice(Allocator& al, usize n, CtorArgs&& ...args){
 template<typename T, typename... CtorArgs>
 View<T> makeView(Allocator& al, usize n, CtorArgs&& ...args){
 	auto s = makeSlice<T>(al, n, core::forward<CtorArgs...>(args)...);
-	return View(s);
+	return View<T>(s);
 }
 
 
@@ -106,10 +102,5 @@ void destroy(Allocator& al, View<T> s){
 }
 
 }
-#endif /* NO_CONCEPTS */
-
-#ifdef NO_CONCEPTS
-#undef Allocator
-#endif
 
 #endif /* Include guard */

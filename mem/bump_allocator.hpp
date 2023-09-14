@@ -5,7 +5,7 @@
 #include "mem/allocator.hpp"
 
 namespace core{
-struct BumpAllocator : Allocator {
+struct BumpAllocator : public Allocator {
 	uintptr _cap = 0;
 	uintptr _offset = 0;
 	byte* _data = nullptr;
