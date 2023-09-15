@@ -9,6 +9,7 @@
 #include "slice.hpp"
 #include "view.hpp"
 #include "array.hpp"
+#include "mat.hpp"
 
 #include "print.hh"
 
@@ -17,6 +18,8 @@
 #include "tests/array.cpp"
 #include "tests/libc_allocator.cpp"
 #include "tests/bump_allocator.cpp"
+
+using namespace core;
 
 template<typename U>
 static void print_arr(U&& v){
@@ -27,7 +30,6 @@ static void print_arr(U&& v){
 	std::cout << "]\n";
 }
 
-using namespace core;
 
 int main(){
 	test_Slice();
@@ -35,6 +37,18 @@ int main(){
 	test_Array();
 	test_LibCAllocator();
 	test_BumpAllocator();
+
+	Mat<int, 3, 2> mat = {
+		1,2,3,4,5,6
+	};
+
+
+	print_arr(mat.row(0));
+	print_arr(mat.row(1));
+	print_arr(mat.row(2));
+
+	print_arr(mat.col(0));
+	print_arr(mat.col(1));
 
 	return 0;
 }
