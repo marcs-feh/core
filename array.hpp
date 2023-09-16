@@ -178,7 +178,7 @@ T sum(const Array<T,N>& v){
 }
 
 template<typename T, usize N>
-T mag(const Array<T,N>& v){
+auto mag(const Array<T,N>& v){
 	auto s = sum(v * v);
 	return std::sqrt(s);
 }
