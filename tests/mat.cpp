@@ -30,12 +30,17 @@ uint test_Mat(){
 	constexpr auto mul = Mat<int, 4, 3>{ 0, 0, 0, 20, 18, 2, 28, 6, 28, 20, 10, 0 };
 	constexpr auto div = Mat<int, 4, 3>{ 9, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0 }; // division by (b+1) to not divide by 0
 
+	constexpr int sum = 39;
+
 	Tp((a + b) == add);
 	Tp((a - b) == sub);
 	Tp((a * b) == mul);
 	Tp((a / (b+1)) == div);
 
 	Tp(transpose(a) == t);
+	Tp(transpose(transpose(a)) == a);
+	Tp(core::sum(a) == sum);
+
 
 	Test_End();
 }

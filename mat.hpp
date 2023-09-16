@@ -1,6 +1,7 @@
 #ifndef _mat_hpp_include_
 #define _mat_hpp_include_
 
+#include "mem/mem.hpp"
 #include "types.hpp"
 #include "array.hpp"
 
@@ -49,6 +50,8 @@ struct Mat {
 		// Bounds_Check(col < M);
 		return data[(row * M) + col];
 	}
+
+	static_assert((M * N) < kili(16), "Matrix too big, adjust this assert or use BigMat");
 };
 
 template<typename T, usize N, usize M>
