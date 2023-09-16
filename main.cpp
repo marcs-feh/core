@@ -29,6 +29,18 @@ static void print_arr(U&& v){
 	}
 	std::cout << "]\n";
 }
+template<typename U>
+static void print_mat(U&& m){
+	for(usize i = 0; i < m.height(); i += 1){
+		auto r = m.row(i);
+
+		std::cout << "| ";
+		for(usize i = 0; i < r.len(); i += 1){
+			std::cout << r[i] << ' ';
+		}
+		std::cout << "|\n";
+	}
+}
 
 
 int main(){
@@ -38,17 +50,15 @@ int main(){
 	test_LibCAllocator();
 	test_BumpAllocator();
 
-	Mat<int, 3, 2> mat = {
-		1,2,3,4,5,6
+	auto mat = Mat<int, 2, 3>{
+		1,2,3,
+		4,5,6,
 	};
 
+	print_mat(mat);
+	print_mat(transpose(mat));
+	print_mat(transpose( transpose(mat) ));
 
-	print_arr(mat.row(0));
-	print_arr(mat.row(1));
-	print_arr(mat.row(2));
-
-	print_arr(mat.col(0));
-	print_arr(mat.col(1));
 
 	return 0;
 }
