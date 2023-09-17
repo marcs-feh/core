@@ -4,6 +4,7 @@
 #include <iostream>
 #include <utility>
 
+
 #include "types.hpp"
 
 namespace {
@@ -40,9 +41,6 @@ static void print_mat(U&& m){
 		std::cout << "|\n";
 	}
 }
-
-
-
 }
 
 template<typename ...Args>

@@ -1,9 +1,13 @@
 #include "test_urself.hpp"
 #include "mat.hpp"
 
+#include "print.hh"
+
 uint test_Mat(){
 	using namespace core;
 	Test_Begin("Matrix");
+
+	Test_Log("WE GOTTA REMAKE EVERYTHING%s", "");
 
 	constexpr Mat<int, 4, 3> a = {
 		9, 0, 0,
