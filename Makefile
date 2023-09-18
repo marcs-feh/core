@@ -1,5 +1,7 @@
-CXX      ?= g++
+# User config
+CXX      ?= g++ -std=c++20
 CXXFLAGS ?= -O1 -march=native -pipe -Wall -Wextra
+# ===========
 
 CXXFLAGS := $(CXXFLAGS) -I. -fno-exceptions -fno-strict-aliasing -std=c++20
 

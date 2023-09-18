@@ -29,6 +29,8 @@ uint test_Array(){
 	Tp(mag(a) == magnitude);
 
 	Tp(swizzle(a, 0, 2, 2) == (Array<f64, 3>{-1.0, 1.0, 1.0}));
+	Tp(swizzle(a, 0, 2, 2) == (Array<f64, 3>{-1.0, 1.0, 1.0}));
+	Tp(swizzle(a, 0) == (Array<f64, 1>{-1.0}));
 	Tp(swizzle(a, 0, 1, 0, 1, 0) == (Array<f64, 5>{-1.0, 0.5, -1.0, 0.5, -1.0}));
 
 	Test_End();

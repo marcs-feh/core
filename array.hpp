@@ -7,6 +7,8 @@
 #include <cmath>
 
 #include "types.hpp"
+#include "utils.hpp"
+#include "mem/mem.hpp"
 
 #ifndef NO_BOUNDS_CHECK
 #include "assert.hpp"
@@ -16,8 +18,6 @@
 #endif
 
 namespace core {
-
-constexpr usize max_array_size = 8192;
 
 template<typename T, usize N>
 struct Array {
@@ -39,7 +39,7 @@ struct Array {
 	}
 
 	static_assert(N > 0, "Array of size 0 not allowed");
-	static_assert(N < max_array_size, "Array exceeds max_array_size");
+	static_assert((N * sizeof(T)) < kili(1), "Array exceeds max_array_size");
 };
 
 /// Vector operations ///
@@ -136,20 +136,31 @@ Array<T,N> operator/(const Array<T,N>& a, const S& b){
 	return v;
 }
 
+namespace {
 
 template<typename T, usize N, usize I, typename U>
 constexpr
-void set_arr_from_param_pack(Array<T, N>& v, U&& elem){
+void fillArrayWithParamPack(Array<T, N>& v, U&& elem){
 	static_assert(I < N, "Out of bounds");
 	v[I] = static_cast<T>(elem);
 }
 
 template<typename T, usize N, usize I = 0, typename U,typename... Args>
 constexpr
-void set_arr_from_param_pack(Array<T, N>& v, U&& elem, Args&& ...indices){
+void fillArrayWithParamPack(Array<T, N>& v, U&& elem, Args&& ...indices){
 	static_assert(I < N, "Out of bounds");
 	v[I] = static_cast<T>(elem);
-	set_arr_from_param_pack<T, N, I+1>(v, indices...);
+	fillArrayWithParamPack<T, N, I+1>(v, forward<Args>(indices)...);
+}
+
+}
+
+template<typename T, usize N, typename U>
+constexpr
+auto swizzle(const Array<T, N>& v, U&& idx){
+	Array<T, 1> res;
+	res[0] = v[idx];
+	return res;
 }
 
 template<typename T, usize N, typename... Index>
@@ -159,13 +170,14 @@ auto swizzle(const Array<T, N>& v, Index&& ...indices){
 	Array<usize, L> idxv;
 	Array<T, L> res;
 
-	set_arr_from_param_pack(idxv, indices...);
+	fillArrayWithParamPack(idxv, indices...);
 	for(usize i = 0; i < L; i += 1){
 		res[i] = v[idxv[i]];
 	}
 
 	return res;
 }
+
 
 template<typename T, usize N>
 constexpr

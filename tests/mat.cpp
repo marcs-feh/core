@@ -7,7 +7,7 @@ uint test_Mat(){
 	using namespace core;
 	Test_Begin("Matrix");
 
-	Test_Log("WE GOTTA REMAKE EVERYTHING%s", "");
+	Test_Log("TODO: MATRIX mat() helper%s", "");
 
 	constexpr Mat<int, 4, 3> a = {
 		9, 0, 0,
@@ -26,7 +26,7 @@ uint test_Mat(){
 	constexpr Mat<int, 3, 4> t = {
 		9, 4, 7, 4,
 		0, 3, 2, 5,
-		0, 1, 4, 0,
+		0, 1, 4, 0,		  
 	};
 
 	constexpr auto add = Mat<int, 4, 3>{ 9, 3, 1, 9, 9, 3, 11, 5, 11, 9, 7, 9 };
@@ -44,6 +44,12 @@ uint test_Mat(){
 	Tp(transpose(a) == t);
 	Tp(transpose(transpose(a)) == a);
 	Tp(core::sum(a) == sum);
+	constexpr auto m0 = mat<int, 2, 3>();
+	// constexpr auto m1 = mat<int, 2, 3>(5);
+	print_mat(m0);
+	// print_mat(transpose(transpose(a)));
+
+
 
 
 	Test_End();

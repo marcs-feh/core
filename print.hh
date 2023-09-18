@@ -32,11 +32,9 @@ static void print_arr(U&& v){
 template<typename U>
 static void print_mat(U&& m){
 	for(usize i = 0; i < m.height(); i += 1){
-		auto r = m.row(i);
-
 		std::cout << "| ";
-		for(usize i = 0; i < r.len(); i += 1){
-			std::cout << r[i] << ' ';
+		for(usize j = 0; j < m.width(); j += 1){
+			std::cout << m.at(i, j) << ' ';
 		}
 		std::cout << "|\n";
 	}
