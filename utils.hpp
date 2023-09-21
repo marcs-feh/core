@@ -1,7 +1,11 @@
+///
+/// General standalone utilities, a *very* slimmed down version of the standard
+/// <utility> header, at least this won't increase compile times too much,
+/// hopefully :^)
+///
+
 #ifndef _utils_hpp_include_
 #define _utils_hpp_include_
-
-#include "config.hpp"
 
 namespace core {
 

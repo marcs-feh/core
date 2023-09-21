@@ -1,3 +1,8 @@
+///
+/// Wrapper around libc's malloc and free that conforms to the Allocator
+/// interface. Use it *very* sparringly.
+///
+
 #ifndef _libc_allocator_hpp_include_
 #define _libc_allocator_hpp_include_
 
@@ -13,7 +18,7 @@ namespace core{
 struct LibCAllocator : public Allocator {
 	void* alloc(usize n) override {
 		void* p = alloc_undef(n);
-		memSet(p, n, 0);
+		mem_set(p, n, 0);
 		return p;
 	}
 
@@ -26,11 +31,11 @@ struct LibCAllocator : public Allocator {
 	}
 
 	void free_all() override {
-		panic("free_all() not supportted");
+		panic("free_all() not supported");
 	}
 
 	bool hasAddress(void*) override {
-		panic("hasAddress() not supportted");
+		panic("hasAddress() not supported");
 		return false;
 	}
 };

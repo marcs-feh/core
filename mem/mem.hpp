@@ -1,3 +1,7 @@
+///
+/// General memory utilities
+///
+
 #ifndef _mem_hpp_include_
 #define _mem_hpp_include_
 
@@ -11,7 +15,7 @@ constexpr uintptr max_align = alignof(std::max_align_t);
 
 // Set n bytes of ptr to v
 static inline
-void memSet(void* ptr, usize n, byte v){
+void mem_set(void* ptr, usize n, byte v){
 	if((ptr == nullptr) || (n == 0)){ return; }
 
 	byte* bp = (byte*)ptr;
@@ -33,7 +37,7 @@ void memSet(void* ptr, usize n, byte v){
 
 // Copy n bytes of src to dest
 static inline
-void memCopy(void* dest, void* src, usize n){
+void mem_copy(void* dest, void* src, usize n){
 	bool ok = (dest == src) || (dest == nullptr) || (src == nullptr);
 	if(!ok){ return; }
 
@@ -47,7 +51,7 @@ void memCopy(void* dest, void* src, usize n){
 // Check if pointer is within 2 other addresses (inclusive), if `from` is bigger
 // than `to` this always returns false
 static constexpr inline
-bool ptrInRange(uintptr from, uintptr p, uintptr to){
+bool ptr_in_range(uintptr from, uintptr p, uintptr to){
 	return (p >= from) && (p <= to);
 }
 
@@ -64,24 +68,53 @@ T alignForward(T p, T a){
 	return p;
 }
 
-template<typename U>
-constexpr usize kili(U&& v){ return v * 1024LL; }
-template<typename U>
-constexpr usize mebi(U&& v){ return v * 1024LL * 1024LL; }
-template<typename U>
-constexpr usize gibi(U&& v){ return v * 1024LL * 1024LL * 1024LL; }
-template<typename U>
-constexpr usize teri(U&& v){ return v * 1024LL * 1024LL * 1024LL * 1024LL; }
+template<typename U, typename T = U>
+constexpr T kili(U&& v){
+	auto x = static_cast<T>(v);
+	return x * 1024LL;
+}
 
-template<typename U>
-constexpr U kilo(U&& v){ return v * 1000LL; }
-template<typename U>
-constexpr U mega(U&& v){ return v * 1000LL * 1000LL; }
-template<typename U>
-constexpr U giga(U&& v){ return v * 1000LL * 1000LL * 1000LL; }
-template<typename U>
-constexpr U tera(U&& v){ return v * 1000LL * 1000LL * 1000LL * 1000LL; }
+template <typename U, typename T = U>
+constexpr T mebi(U &&v) {
+	auto x = static_cast<T>(v);
+	return v * 1024LL * 1024LL;
+}
 
+template <typename U, typename T = U>
+constexpr T gibi(U &&v) {
+	auto x = static_cast<T>(v);
+	return v * 1024LL * 1024LL * 1024LL;
+}
+
+template <typename U, typename T = U>
+constexpr T teri(U &&v) {
+	auto x = static_cast<T>(v);
+	return v * 1024LL * 1024LL * 1024LL * 1024LL;
+}
+
+template <typename U, typename T = U>
+constexpr T kilo(U &&v) {
+	auto x = static_cast<T>(v);
+	return v * 1000LL;
+}
+
+template <typename U, typename T = U>
+constexpr T mega(U &&v) {
+	auto x = static_cast<T>(v);
+	return v * 1000LL * 1000LL;
+}
+
+template <typename U, typename T = U>
+constexpr T giga(U &&v) {
+	auto x = static_cast<T>(v);
+	return v * 1000LL * 1000LL * 1000LL;
+}
+
+template <typename U, typename T = U>
+constexpr T tera(U &&v) {
+	auto x = static_cast<T>(v);
+	return v * 1000LL * 1000LL * 1000LL * 1000LL;
+}
 }
 
 

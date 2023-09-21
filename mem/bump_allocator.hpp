@@ -1,3 +1,9 @@
+///
+/// AKA Linear or a non growing Arena allocator, memory is a allocated by
+/// "bumping" up an offset, it's the simplest allocator and great for objects of
+/// similar lifetime but distinct sizes.
+///
+
 #ifndef _bump_allocator_hpp_include_
 #define _bump_allocator_hpp_include_
 
@@ -13,7 +19,7 @@ struct BumpAllocator : public Allocator {
 	void* alloc(usize nbytes) override {
 		void* p = alloc_undef(nbytes);
 		if(p != nullptr){
-			memSet(p, nbytes, 0);
+			mem_set(p, nbytes, 0);
 		}
 		return p;
 	}
@@ -38,7 +44,7 @@ struct BumpAllocator : public Allocator {
 		auto base = (uintptr)_data;
 		auto limit = base + (uintptr)_cap;
 
-		return ptrInRange(base, (uintptr)p, limit);
+		return ptr_in_range(base, (uintptr)p, limit);
 	}
 
 	void free(void*) override {
