@@ -50,22 +50,22 @@ using b16 = uint16_t;
 using b32 = uint32_t;
 using b64 = uint64_t;
 
-namespace core {
-namespace limits {
-constexpr u8  u8_max  = 0xffULL;
-constexpr u16 u16_max = 0xffffULL;
-constexpr u32 u32_max = 0xffff'ffffULL;
-constexpr u64 u64_max = 0xffff'ffff'ffff'ffffULL;
-
-constexpr i8  i8_max  = 0x7fLL;
-constexpr i16 i16_max = 0x7fffLL;
-constexpr i32 i32_max = 0x7fff'ffffLL;
-constexpr i64 i64_max = 0x7fff'ffff'ffff'ffffLL;
-
-constexpr i8  i8_min  = -0x80LL;
-constexpr i16 i16_min = -0x8000LL;
-constexpr i32 i32_min = -0x8000'0000LL;
-constexpr i64 i64_min = -0x8000'0000'0000'0000LL;
-}}
+// namespace core {
+// namespace limits {
+// constexpr u8  u8_max  = 0xffULL;
+// constexpr u16 u16_max = 0xffffULL;
+// constexpr u32 u32_max = 0xffff'ffffULL;
+// constexpr u64 u64_max = 0xffff'ffff'ffff'ffffULL;
+//
+// constexpr i8  i8_max  = 0x7fLL;
+// constexpr i16 i16_max = 0x7fffLL;
+// constexpr i32 i32_max = 0x7fff'ffffLL;
+// constexpr i64 i64_max = 0x7fff'ffff'ffff'ffffLL;
+//
+// constexpr i8  i8_min  = -0x80LL;
+// constexpr i16 i16_min = -0x8000LL;
+// constexpr i32 i32_min = -0x8000'0000LL;
+// constexpr i64 i64_min = -0x8000'0000'0000'0000LL;
+// }}
 
 #endif /* Include guard */
