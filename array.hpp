@@ -1,8 +1,6 @@
 #ifndef _array_hpp_include_
 #define _array_hpp_include_
 
-// TODO: Concepts?
-
 // TODO: use constexpr newton raphson maybe?
 #include <cmath>
 
@@ -37,6 +35,17 @@ struct Array {
 		// Bounds_Check(idx < N);
 		return data[idx];
 	}
+
+	template<typename U>
+	constexpr
+	Array<U, N> as_type() const{
+		Array<U, N> a;
+		for(usize i = 0; i < N; i += 1){
+			a[i] = static_cast<U>(data[i]);
+		}
+		return a;
+	}
+
 
 	static_assert(N > 0, "Array of size 0 not allowed");
 	static_assert((N * sizeof(T)) < kili(1), "Array exceeds max_array_size");

@@ -27,7 +27,7 @@ uint test_BumpAllocator(){
 			}
 			Tp(zeroed);
 		}
-		al.freeAll();
+		al.free_all();
 		Tp(al._offset == 0);
 		Tp(al.alloc(n + 1) == nullptr);
 		Tp(al._offset == 0);

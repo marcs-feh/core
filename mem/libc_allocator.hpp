@@ -12,12 +12,12 @@ namespace core{
 // TODO: proper impl
 struct LibCAllocator : public Allocator {
 	void* alloc(usize n) override {
-		void* p = allocUndef(n);
+		void* p = alloc_undef(n);
 		memSet(p, n, 0);
 		return p;
 	}
 
-	void* allocUndef(usize n) override {
+	void* alloc_undef(usize n) override {
 		return std::malloc(n);
 	}
 
@@ -25,8 +25,8 @@ struct LibCAllocator : public Allocator {
 		std::free(ptr);
 	}
 
-	void freeAll() override {
-		panic("freeAll() not supportted");
+	void free_all() override {
+		panic("free_all() not supportted");
 	}
 
 	bool hasAddress(void*) override {

@@ -11,14 +11,14 @@ struct BumpAllocator : public Allocator {
 	byte* _data = nullptr;
 
 	void* alloc(usize nbytes) override {
-		void* p = allocUndef(nbytes);
+		void* p = alloc_undef(nbytes);
 		if(p != nullptr){
 			memSet(p, nbytes, 0);
 		}
 		return p;
 	}
 
-	void* allocUndef(usize nbytes) override {
+	void* alloc_undef(usize nbytes) override {
 		const auto base = (uintptr)_data;
 		uintptr pad = alignForward(base + _offset, core::max_align) - (base + _offset);
 
@@ -45,7 +45,7 @@ struct BumpAllocator : public Allocator {
 		panic("free() not supported");
 	}
 
-	void freeAll() override {
+	void free_all() override {
 		_offset = 0;
 	}
 
