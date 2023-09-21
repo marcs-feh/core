@@ -8,11 +8,11 @@
 
 namespace core {
 template<typename T, usize W, usize H>
-struct Mat {
-	using Row = Array<T, W>;
+struct CMat {
 	using Col = Array<T, H>;
+	using Row = Array<T, W>;
 
-	T data[H * W];
+	Col data[W];
 
 	constexpr
 	usize height() const { return H; }
@@ -21,44 +21,44 @@ struct Mat {
 	usize width() const { return W; }
 
 	constexpr
-	Row row(usize idx) const {
-		Row r;
-		for(usize i = 0; i < W; i += 1){
-			r[i] = at(idx, i);
-		}
-		return r;
+	Col col(usize idx) const {
+		// Bounds_Check(idx < W);
+		return data[idx];
 	}
 
 	constexpr
-	Col col(usize idx) const {
-		Col c;
+	Row row(usize idx) const {
+		// Bounds_Check(idx < H);
+		Row r;
 		for(usize i = 0; i < W; i += 1){
-			c[i] = at(i, idx);
+			r[i] = data[i][idx];
 		}
-		return c;
+		return r;
 	}
 
 	constexpr
 	T& at(usize row, usize col){
 		// Bounds_Check(row < H);
 		// Bounds_Check(col < W);
-		return data[(col * H) + row];
+		return data[col][row];
 	}
 
 	constexpr
 	const T& at(usize row, usize col) const {
 		// Bounds_Check(row < H);
 		// Bounds_Check(col < W);
-		return data[(col * H) + row];
+		return data[col][row];
 	}
 
 	static_assert((W * H * sizeof(T)) < kili(1), "Matrix too big, adjust this assert or use BigMat");
 };
 
+
+
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> transpose(const Mat<T,W,H>& m){
-	Mat<T, H, W> t;
+CMat<T,H,W> transpose(const CMat<T,W,H>& m){
+	CMat<T, H, W> t;
 	constexpr auto th = t.height();
 	constexpr auto tw = t.width();
 	for(usize row = 0; row < th; row += 1){
@@ -71,8 +71,8 @@ Mat<T,H,W> transpose(const Mat<T,W,H>& m){
 
 template<typename T, usize W, usize H>
 constexpr
-bool operator==(const Mat<T,H,W>& a, const Mat<T,H,W>& b){
-	for(usize i = 0; i < (H*W); i += 1){
+bool operator==(const CMat<T,W,H>& a, const CMat<T,W,H>& b){
+	for(usize i = 0; i < W; i += 1){
 		if(a.data[i] != b.data[i]){ return false; }
 	}
 	return true;
@@ -80,51 +80,60 @@ bool operator==(const Mat<T,H,W>& a, const Mat<T,H,W>& b){
 
 template<typename T, usize W, usize H>
 constexpr
-T sum(const Mat<T,H,W>& m){
+T sum(const CMat<T,W,H>& m){
 	T s{0};
-	for(usize i = 0; i < (W*H); i += 1){
-		s += m.data[i];
+	for(usize i = 0; i < W; i += 1){
+		s += sum(m.data[i]);
 	}
 	return s;
 }
 
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator+(const Mat<T,H,W>& a, const Mat<T,H,W>& b){
-	Mat<T,H,W> m;
-	for(usize i = 0; i < (H*W); i += 1){
+CMat<T,W,H> operator+(const CMat<T,W,H>& a, const CMat<T,W,H>& b){
+	CMat<T,W,H> m;
+	for(usize i = 0; i < W; i += 1){
 		m.data[i] = a.data[i] + b.data[i];
 	}
 	return m;
 }
 
+template<typename T, usize Wa, usize Ha, usize Wb, usize Hb>
+constexpr
+auto operator*(const CMat<T,Wa,Ha>& a, const CMat<T,Wb,Hb>& b){
+	static_assert(Wa == Hb, "Matrix of incompatible sizes for matrix multiplication");
+	CMat<T,Wb,Ha> m;
+	auto ta = transpose(a);
+	constexpr auto resw = Wb;
+	constexpr auto resh = Ha;
+
+	for(usize acol = 0; acol < resw; acol += 1){
+		for(usize bcol = 0; bcol < resh; bcol += 1){
+			m.at(acol, bcol) = sum(ta.col(acol) * b.col(bcol));
+		}
+	}
+
+	return m;
+}
+
 
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator-(const Mat<T,H,W>& a, const Mat<T,H,W>& b){
-	Mat<T,H,W> m;
-	for(usize i = 0; i < (H*W); i += 1){
+CMat<T,W,H> operator-(const CMat<T,W,H>& a, const CMat<T,W,H>& b){
+	CMat<T,W,H> m;
+	for(usize i = 0; i < W; i += 1){
 		m.data[i] = a.data[i] - b.data[i];
 	}
 	return m;
 }
 
-template<typename T, usize W, usize H>
-constexpr
-Mat<T,H,W> operator*(const Mat<T,H,W>& a, const Mat<T,H,W>& b){
-	Mat<T,H,W> m;
-	for(usize i = 0; i < (H*W); i += 1){
-		m.data[i] = a.data[i] * b.data[i];
-	}
-	return m;
-}
 
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator/(const Mat<T,H,W>& a, const Mat<T,H,W>& b){
+CMat<T,W,H> operator/(const CMat<T,W,H>& a, const CMat<T,W,H>& b){
 	// TODO: div by zero
-	Mat<T,H,W> m;
-	for(usize i = 0; i < (H*W); i += 1){
+	CMat<T,W,H> m;
+	for(usize i = 0; i < W; i += 1){
 		m.data[i] = a.data[i] / b.data[i];
 	}
 	return m;
@@ -132,9 +141,9 @@ Mat<T,H,W> operator/(const Mat<T,H,W>& a, const Mat<T,H,W>& b){
 
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator+(const Mat<T,H,W>& a, const T& b){
-	Mat<T,H,W> m;
-	for(usize i = 0; i < (H*W); i += 1){
+CMat<T,W,H> operator+(const CMat<T,W,H>& a, const T& b){
+	CMat<T,W,H> m;
+	for(usize i = 0; i < W; i += 1){
 		m.data[i] = a.data[i] + b;
 	}
 	return m;
@@ -142,9 +151,9 @@ Mat<T,H,W> operator+(const Mat<T,H,W>& a, const T& b){
 
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator-(const Mat<T,H,W>& a, const T& b){
-	Mat<T,H,W> m;
-	for(usize i = 0; i < (H*W); i += 1){
+CMat<T,W,H> operator-(const CMat<T,W,H>& a, const T& b){
+	CMat<T,W,H> m;
+	for(usize i = 0; i < W; i += 1){
 		m.data[i] = a.data[i] - b;
 	}
 	return m;
@@ -152,55 +161,29 @@ Mat<T,H,W> operator-(const Mat<T,H,W>& a, const T& b){
 
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator*(const Mat<T,H,W>& a, const T& b){
-	Mat<T,H,W> m;
-	for(usize i = 0; i < (H*W); i += 1){
+CMat<T,W,H> operator*(const CMat<T,W,H>& a, const T& b){
+	CMat<T,W,H> m;
+	for(usize i = 0; i < W; i += 1){
 		m.data[i] = a.data[i] * b;
 	}
 	return m;
 }
 
-namespace {
-
-template<typename T, usize W, usize H, usize I, typename U>
+template<typename T, usize W, usize H>
 constexpr
-void fillMatWithParamPack(Mat<T, W, H>& m, U&& elem){
-	static_assert(I < (H*W), "Out of bounds");
-	m.data[I] = static_cast<T>(elem);
+CMat<T,W,H> hadamard_prod(const CMat<T,W,H>& a, const CMat<T,W,H>& b){
+	CMat<T,W,H> m;
+	for(usize i = 0; i < W; i += 1){
+		m.data[i] = a.data[i] * b.data[i];
+	}
+	return m;
 }
-
-template<typename T, usize W, usize H, usize I = 0, typename U, typename... Args>
-constexpr
-void fillMatWithParamPack(Mat<T, W, H>& m, U&& elem, Args&& ...indices){
-	static_assert(I < (H*W), "Out of bounds");
-	m.data[I] = static_cast<T>(elem);
-	fillMatWithParamPack<T, W, H, I+1>(m, forward<Args>(indices)...);
-}
-
-
-
-}
-
-template<typename T, usize W, usize H, typename... Args>
-constexpr
-Mat<T, W, H> mat(){
-	return Mat<T,W,H>();
-}
-
-template<typename T, usize W, usize H, typename... Args>
-constexpr
-Mat<T, H, W> mat(Args&& ...args){
-	Mat<T,W,H> m{0};
-	fillMatWithParamPack(m, forward<Args>(args)...);
-	return transpose(m);
-}
-
 
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator/(const Mat<T,H,W>& a, const T& b){
-	Mat<T,H,W> m;
-	for(usize i = 0; i < (H*W); i += 1){
+CMat<T,W,H> operator/(const CMat<T,W,H>& a, const T& b){
+	CMat<T,W,H> m;
+	for(usize i = 0; i < W; i += 1){
 		m.data[i] = a.data[i] / b;
 	}
 	return m;
@@ -208,16 +191,16 @@ Mat<T,H,W> operator/(const Mat<T,H,W>& a, const T& b){
 
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator+(const T& a, const Mat<T,H,W>& b){ return b + a; }
+CMat<T,W,H> operator+(const T& a, const CMat<T,W,H>& b){ return b + a; }
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator-(const T& a, const Mat<T,H,W>& b){ return b - a; }
+CMat<T,W,H> operator-(const T& a, const CMat<T,W,H>& b){ return b - a; }
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator*(const T& a, const Mat<T,H,W>& b){ return b * a; }
+CMat<T,W,H> operator*(const T& a, const CMat<T,W,H>& b){ return b * a; }
 template<typename T, usize W, usize H>
 constexpr
-Mat<T,H,W> operator/(const T& a, const Mat<T,H,W>& b){ return b / a; }
+CMat<T,W,H> operator/(const T& a, const CMat<T,W,H>& b){ return b / a; }
 
 }
 

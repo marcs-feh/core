@@ -94,6 +94,12 @@ bool operator==(const Array<T,N>& a, const Array<T,N>& b){
 	return true;
 }
 
+// template<typename T, usize N>
+// constexpr
+// bool operator!=(const Array<T,N>& a, const Array<T,N>& b){
+// 	return !(a == b);
+// }
+
 /// Scalar operations ///
 
 template<typename T, usize N, typename S>
