@@ -16,8 +16,8 @@ uint test_BumpAllocator(){
 		Tp(num != nullptr);
 		auto nums = core::make_n<int>(al, 200);
 		Tp(nums.raw_ptr() != nullptr);
-		Tp(al.hasAddress(nums.raw_ptr()));
-		Tp(!al.hasAddress(nullptr));
+		Tp(al.has_address(nums.raw_ptr()));
+		Tp(!al.has_address(nullptr));
 		Tp(nums.len() == 200);
 		Tp(al._offset > 200);
 		{

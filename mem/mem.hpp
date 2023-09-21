@@ -58,7 +58,7 @@ bool ptr_in_range(uintptr from, uintptr p, uintptr to){
 // Align a value to a specific alignment `a`.
 template<typename T>
 constexpr
-T alignForward(T p, T a){
+T align_forward(T p, T a){
 	T mod = p % a;
 
 	if(mod > 0){

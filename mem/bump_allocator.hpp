@@ -26,7 +26,7 @@ struct BumpAllocator : public Allocator {
 
 	void* alloc_undef(usize nbytes) override {
 		const auto base = (uintptr)_data;
-		uintptr pad = alignForward(base + _offset, core::max_align) - (base + _offset);
+		uintptr pad = align_forward(base + _offset, core::max_align) - (base + _offset);
 
 		if((_offset + pad + nbytes) >= _cap){
 			// Out of memory
@@ -40,7 +40,7 @@ struct BumpAllocator : public Allocator {
 		return p;
 	}
 
-	bool hasAddress(void* p) override {
+	bool has_address(void* p) override {
 		auto base = (uintptr)_data;
 		auto limit = base + (uintptr)_cap;
 

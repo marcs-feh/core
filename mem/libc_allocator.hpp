@@ -34,7 +34,7 @@ struct LibCAllocator : public Allocator {
 		panic("free_all() not supported");
 	}
 
-	bool hasAddress(void*) override {
+	bool has_address(void*) override {
 		panic("hasAddress() not supported");
 		return false;
 	}

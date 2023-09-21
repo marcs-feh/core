@@ -24,7 +24,7 @@ namespace core {
 struct Allocator {
 	virtual void* alloc(usize nbytes) = 0;
 	virtual void* alloc_undef(usize nbytes) = 0;
-	virtual bool hasAddress(void* p) = 0;
+	virtual bool has_address(void* p) = 0;
 	virtual void free(void* p) = 0;
 	virtual void free_all() = 0;
 	// void* realloc(void* p, usize old_size, usize new_size);
