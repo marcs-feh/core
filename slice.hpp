@@ -1,3 +1,9 @@
+///
+/// A Slice is a pointer and lenght that serves as a general object for
+/// representing linear collections. Slices can be used as a cheap generic
+/// interface that a function can use to support many Array-like types.
+///
+
 #ifndef _slice_hpp_include_
 #define _slice_hpp_include_
 
@@ -17,10 +23,12 @@ struct Slice {
 	T* _data = nullptr;
 	usize _length = 0;
 
+	constexpr
 	usize len() const {
 		return _length;
 	}
 
+	constexpr
 	T* raw_ptr() const {
 		return _data;
 	}

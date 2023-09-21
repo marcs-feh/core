@@ -1,3 +1,7 @@
+///
+/// A View is the same as a Slice but it's meant for read-only data.
+///
+
 #ifndef _view_hpp_include_
 #define _view_hpp_include_
 

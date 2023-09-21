@@ -1,4 +1,6 @@
-// Build configuration macros
+///
+/// Build configuration macros
+///
 
 #ifndef _config_hpp_include_
 #define _config_hpp_include_

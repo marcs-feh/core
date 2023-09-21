@@ -1,3 +1,7 @@
+///
+/// Assert and panic macros
+///
+
 #ifndef _assert_hpp_include_
 #define _assert_hpp_include_
 

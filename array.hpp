@@ -1,3 +1,7 @@
+//
+// Static Array with common element-wise operations.
+//
+
 #ifndef _array_hpp_include_
 #define _array_hpp_include_
 

@@ -1,3 +1,11 @@
+///
+/// Allocator interface and utilities, this is completely different from the
+/// usual std::allocator trash. Allocators are not responsible for running
+/// destructors or constructors, they *only* allocate/deallocate memory. You can
+/// query which functions an allocator supports at runtime. A failed allocation
+/// returns nullptr.
+///
+
 #ifndef _allocator_hpp_include_
 #define _allocator_hpp_include_
 
@@ -41,7 +49,7 @@ T* make(Allocator& al, CtorArgs&& ...args){
 }
 
 template<typename T>
-Slice<T> makeSlice(Allocator& al, usize n){
+Slice<T> make_n(Allocator& al, usize n){
 	T* p = static_cast<T*>(al.alloc(sizeof(T) * n));
 
 	if(p != nullptr){
@@ -53,14 +61,8 @@ Slice<T> makeSlice(Allocator& al, usize n){
 	return Slice<T>(p, n);
 }
 
-template<typename T>
-View<T> makeView(Allocator& al, usize n){
-	auto s = makeSlice<T>(al, n);
-	return View<T>(s);
-}
-
 template<typename T, typename... CtorArgs>
-Slice<T> makeSlice(Allocator& al, usize n, CtorArgs&& ...args){
+Slice<T> make_n(Allocator& al, usize n, CtorArgs&& ...args){
 	T* p = static_cast<T*>(al.alloc(sizeof(T) * n));
 
 	if(p != nullptr){
@@ -71,13 +73,6 @@ Slice<T> makeSlice(Allocator& al, usize n, CtorArgs&& ...args){
 
 	return Slice<T>(p, 0);
 }
-
-template<typename T, typename... CtorArgs>
-View<T> makeView(Allocator& al, usize n, CtorArgs&& ...args){
-	auto s = makeSlice<T>(al, n, core::forward<CtorArgs...>(args)...);
-	return View<T>(s);
-}
-
 
 template<typename T>
 void destroy(Allocator& al, T* ptr){

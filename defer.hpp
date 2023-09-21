@@ -1,3 +1,9 @@
+///
+/// Defer macro that abuses C++ destructors to improve its syntax a bit, this is
+/// equivalente to Odin/Zig defer, it runs at the end of a scope, *not* at the
+/// end of a function like Go does
+///
+
 #ifndef _defer_hpp_include_
 #define _defer_hpp_include_
 
@@ -13,7 +19,7 @@ struct DefferedCall {
 };
 
 template<typename F>
-auto makeDeferCall(F&& f){
+auto make_deferred_call(F&& f){
 	return DefferedCall<F>(forward<F>(f));
 }
 
@@ -26,7 +32,7 @@ struct DefferedIfCall {
 };
 
 template<typename F>
-auto makeDeferIfCall(F&& f, bool expr){
+auto make_conditional_deferred_call(F&& f, bool expr){
 	return DefferedIfCall<F>(forward<F>(f), expr);
 }
 
@@ -38,9 +44,9 @@ auto makeDeferIfCall(F&& f, bool expr){
 #define _core_CONCAT_COUNTER(X_) _core_CONCAT_1(X_, __COUNTER__)
 
 #define defer(BLK_) \
-	auto _core_CONCAT_COUNTER(_defer_call_) = core::_defer_impl::makeDeferCall([&](){ BLK_; });
+	auto _core_CONCAT_COUNTER(_defer_call_) = core::_defer_impl::make_deferred_call([&](){ BLK_; });
 
 #define defer_if(COND_, BLK_) \
-	auto _core_CONCAT_COUNTER(_defer_call_) = core::_defer_impl::makeDeferIfCall([&](){ BLK_; }, (COND_) );
+	auto _core_CONCAT_COUNTER(_defer_call_) = core::_defer_impl::make_conditional_deferred_call([&](){ BLK_; }, (COND_) );
 
 #endif /* Include guard */
