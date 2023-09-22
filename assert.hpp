@@ -5,6 +5,7 @@
 #ifndef _assert_hpp_include_
 #define _assert_hpp_include_
 
+// TODO: support recovery routines
 // TODO: different naming conv for macros?
 
 #include <cstdio>
@@ -42,9 +43,19 @@ void debug_assert(bool expr, const char* msg){
 		Abort_Program();
 	}
 }
+
+static inline
+void debug_panic(const char* msg = nullptr){
+	if(msg != nullptr){
+		fprintf(stderr, "Panic: %s\n", msg);
+	}
+	Abort_Program();
+}
 #else
 static inline
 void debug_assert(bool, const char*){}
+static inline
+void debug_panic(const char* = nullptr){}
 #endif
 
 }

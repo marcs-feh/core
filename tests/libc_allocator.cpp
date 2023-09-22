@@ -2,7 +2,7 @@
 #include "test_urself.hpp"
 
 uint test_LibCAllocator(){
-	Test_Begin("LibCAllocator");
+	Test_Begin("LibC Allocator");
 	using namespace core;
 
 	LibCAllocator al;

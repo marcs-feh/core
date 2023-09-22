@@ -1,6 +1,6 @@
 # User config
-CXX      ?= g++ -std=c++20
-CXXFLAGS ?= -O1 -march=native -pipe -Wall -Wextra
+CXX      ?= clang++ -std=c++20
+CXXFLAGS ?= -O1 -march=native -pipe -Wall -Wextra -DRELEASE_MODE
 # ===========
 
 CXXFLAGS := $(CXXFLAGS) -I. -fno-exceptions -fno-strict-aliasing -std=c++20

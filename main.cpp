@@ -19,17 +19,20 @@
 #include "tests/mat.cpp"
 #include "tests/libc_allocator.cpp"
 #include "tests/bump_allocator.cpp"
+#include "tests/pool_allocator.cpp"
 
 using namespace core;
 
 int main(){
-	test_Slice();
-	test_View();
-	test_Array();
-	test_Mat();
-	test_LibCAllocator();
-	test_BumpAllocator();
+	uint s =
+		+ test_Slice()
+		+ test_View()
+		+ test_Array()
+		+ test_Mat()
+		+ test_LibCAllocator()
+		+ test_BumpAllocator()
+		+ test_PoolAllocator()
+	;
 
-
-	return 0;
+	return s;
 }
