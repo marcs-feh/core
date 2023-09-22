@@ -5,42 +5,26 @@
 #include "mem/mem.hpp"
 #include "mem/allocator.hpp"
 
+// TODO: extra safety for free()
 namespace core{
 
-struct FreeListNode {
-	FreeListNode* next = nullptr;
-};
-
 struct PoolAllocator : public Allocator {
+	struct FreeListNode {
+		FreeListNode* next = nullptr;
+	};
 	byte* _buf;
 	usize _buf_len;
 	usize _chunk_size;
 	FreeListNode* _head;
 
-	PoolAllocator() : _buf{nullptr}, _buf_len{0}, _chunk_size{0}, _head{nullptr} {}
-
-	PoolAllocator(Slice<byte> storage, usize chunk_size, usize chunk_align = max_align) {
-		uintptr initial_base = (uintptr)storage.raw_ptr();
-		uintptr base         = align_forward(initial_base, chunk_align);
-
-		usize true_length     = storage.len() - (base - initial_base);
-		usize true_chunk_size = align_forward(chunk_size, chunk_align);
-
-		Assert(chunk_size >= sizeof(FreeListNode));
-		Assert(true_length >= chunk_size);
-
-		_buf        = storage.raw_ptr();
-		_buf_len    = true_length;
-		_chunk_size = true_chunk_size;
-		_head       = nullptr;
-
-		free_all();
+	usize chunk_count() const {
+		return _buf_len / _chunk_size;
 	}
 
 	void free_all() override {
-		usize chunk_count = _buf_len / _chunk_size;
+		usize count = chunk_count();
 
-		for(usize i = 0; i < chunk_count; i += 1){
+		for(usize i = 0; i < count; i += 1){
 			void* ptr = &_buf[i * _chunk_size];
 			auto node = (FreeListNode*)ptr;
 			node->next = _head;
@@ -70,6 +54,7 @@ struct PoolAllocator : public Allocator {
 	}
 
 	void* alloc_undef(usize nbytes) override {
+		if(nbytes == 0){ return nullptr; }
 		auto node = _head;
 		if(node == nullptr){
 			debug_panic("Out of memory");
@@ -89,6 +74,26 @@ struct PoolAllocator : public Allocator {
 		void* start = _buf;
 		void* end = &_buf[_buf_len];
 		return (p >= start) && (p < end);
+	}
+
+	PoolAllocator() : _buf{nullptr}, _buf_len{0}, _chunk_size{0}, _head{nullptr} {}
+
+	PoolAllocator(Slice<byte> storage, usize chunk_size, usize chunk_align = max_align) {
+		uintptr initial_base = (uintptr)storage.raw_ptr();
+		uintptr base         = align_forward(initial_base, chunk_align);
+
+		usize true_length     = storage.len() - (base - initial_base);
+		usize true_chunk_size = align_forward(chunk_size, chunk_align);
+
+		Assert(chunk_size >= sizeof(FreeListNode));
+		Assert(true_length >= chunk_size);
+
+		_buf        = storage.raw_ptr();
+		_buf_len    = true_length;
+		_chunk_size = true_chunk_size;
+		_head       = nullptr;
+
+		free_all();
 	}
 };
 

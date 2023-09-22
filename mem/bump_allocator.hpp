@@ -25,6 +25,7 @@ struct BumpAllocator : public Allocator {
 	}
 
 	void* alloc_undef(usize nbytes) override {
+		if(nbytes == 0){ return nullptr; }
 		const auto base = (uintptr)_data;
 		uintptr pad = align_forward(base + _offset, core::max_align) - (base + _offset);
 
@@ -56,7 +57,6 @@ struct BumpAllocator : public Allocator {
 	}
 
 	BumpAllocator(){}
-	BumpAllocator(byte* buf, usize n) : _cap{n}, _data{buf} {}
 	BumpAllocator(Slice<byte> buf) : _cap{buf.len()}, _data{buf.raw_ptr()}{}
 };
 }
