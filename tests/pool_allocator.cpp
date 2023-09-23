@@ -19,8 +19,8 @@ uint test_PoolAllocator(){
 
 	{
 		auto p = make_n<i32>(al, 5);
+		defer(destroy(al, p));
 		Tp(p.raw_ptr() != nullptr);
-		destroy(al, p.raw_ptr() + 1);
 	}
 	{
 		auto p = make_n<i32>(al, 10);
