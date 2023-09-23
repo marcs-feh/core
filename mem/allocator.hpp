@@ -84,7 +84,7 @@ void destroy(Allocator& al, T* ptr){
 }
 
 template<typename T>
-void destroy(Allocator& al, View<T> s){
+void destroy(Allocator& al, Slice<T> s){
 	// TODO check ownership
 	T* ptr = s.raw_ptr();
 	usize n = s.len();

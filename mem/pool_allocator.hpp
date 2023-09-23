@@ -73,7 +73,18 @@ struct PoolAllocator : public Allocator {
 	bool has_address(void *p) override {
 		void* start = _buf;
 		void* end = &_buf[_buf_len];
-		return (p >= start) && (p < end);
+		bool in_range = (p >= start) && (p < end);
+		if(!in_range){ return false; }
+
+		usize count = chunk_count();
+
+		for(usize i = 0; i < count; i += 1){
+			void* ptr = &_buf[i * _chunk_size];
+			if(p == ptr){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	PoolAllocator() : _buf{nullptr}, _buf_len{0}, _chunk_size{0}, _head{nullptr} {}
