@@ -26,7 +26,7 @@ struct DynArray {
 	template<typename U>
 	usize append(U&& e){
 		if((length + 1) >= cap()){
-			bool ok = _expand_cap((cap() * 1.5) + 1);
+			bool ok = _expand_cap(increase_cap(cap()));
 			if(!ok){
 				debug_panic("Could not append element");
 				return length;
@@ -41,18 +41,23 @@ struct DynArray {
 
 	// TODO: realloc()
 	bool _expand_cap(usize new_size){
+		// panic_assert(new_size > cap(), "Cannot _expand_cap() to a smaller capacity");
 		T* new_data = static_cast<T*>(alloc->alloc(new_size * sizeof(T)));
 
 		if(new_data == nullptr){
 			return false;
 		}
 
-		for(usize i = 0; i < data.len(); i += 1){
-			new (&new_data[i]) T(move(data[i]));
+		T* old_data = data.raw_ptr();
+
+		for(usize i = 0; i < length; i += 1){
+			new (&new_data[i]) T(move(old_data[i]));
 		}
 
 		destroy(*alloc, data);
+
 		data = Slice<T>(new_data, new_size);
+		return true;
 	}
 
 	DynArray(){}
@@ -70,8 +75,13 @@ struct DynArray {
 	~DynArray(){
 		destroy(*alloc, data);
 	}
+
 	static constexpr usize min_size = 4;
-	static constexpr usize default_size = 16;
+	static constexpr usize default_size = 5;
+	static constexpr auto increase_cap = [](usize n) {
+		usize x = (n * 1.5) + 1;
+		return align_forward(x, max_align);
+	};
 };
 }
 

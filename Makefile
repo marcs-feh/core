@@ -1,6 +1,6 @@
 # User config
 CXX      ?= g++ -std=c++14
-CXXFLAGS ?= -O1 -march=native -pipe -Wall -Wextra  -DRELEASE_MODE -g -fsanitize=address
+CXXFLAGS ?= -O1 -march=native -pipe -Wall -Wextra -g -fsanitize=address -DRELEASE_MODE
 # ===========
 
 CXXFLAGS := $(CXXFLAGS) -I. -fno-exceptions -fno-strict-aliasing -std=c++20

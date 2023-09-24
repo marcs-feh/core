@@ -38,7 +38,7 @@ int main(){
 
 	print(arr.data.raw_ptr());
 	for(usize i = 0; i < 60; i += 1){
-		print(arr.append(1), arr.cap());
+		print(arr.append(i * 3), arr.cap());
 	}
 	print(arr.data.raw_ptr());
 
