@@ -35,6 +35,7 @@ void panic_assert(bool expr, const char* msg){
 	}
 }
 
+
 #ifndef NO_DEBUG_ASSERT
 static inline
 void debug_assert(bool expr, const char* msg){

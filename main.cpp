@@ -2,6 +2,7 @@
 #include "defer.hpp"
 #include "assert.hpp"
 #include "context.hpp"
+#include "dyn_array.hpp"
 #include "mem/bump_allocator.hpp"
 
 #include "slice.hpp"
@@ -31,6 +32,15 @@ int main(){
 		+ test_BumpAllocator()
 		+ test_PoolAllocator()
 	;
+
+	auto al = LibCAllocator();
+	auto arr = DynArray<int>(&al);
+
+	print(arr.data.raw_ptr());
+	for(usize i = 0; i < 60; i += 1){
+		print(arr.append(1), arr.cap());
+	}
+	print(arr.data.raw_ptr());
 
 	return s;
 }
