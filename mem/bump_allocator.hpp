@@ -30,7 +30,7 @@ struct BumpAllocator : public Allocator {
 		uintptr pad = align_forward(base + _offset, core::max_align) - (base + _offset);
 
 		if((_offset + pad + nbytes) >= _cap){
-			// Out of memory
+			debug_panic("Out of memory");
 			return nullptr;
 		}
 
