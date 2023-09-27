@@ -7,6 +7,7 @@
 #ifndef _utils_hpp_include_
 #define _utils_hpp_include_
 
+#include <type_traits>
 namespace core {
 
 namespace typing {
@@ -18,6 +19,7 @@ struct RemoveReferenceType<T&> {typedef T Type; };
 template<typename T>
 struct RemoveReferenceType<T&&> {typedef T Type; };
 
+
 template<typename T, T v>
 struct IntegralConstant {
 	static constexpr T value = v;
@@ -25,22 +27,32 @@ struct IntegralConstant {
 	constexpr operator ValueType() { return value; }
 };
 
-using True_Type  = IntegralConstant<bool, true>;
-using False_Type = IntegralConstant<bool, false>;
+
+using TrueType  = IntegralConstant<bool, true>;
+using FalseType = IntegralConstant<bool, false>;
+
+template<typename A, typename B>
+struct SameType : FalseType {};
 
 template<typename T>
-struct IsLValueReference : False_Type {};
-template<typename T>
-struct IsLValueReference<T&> : True_Type {};
-template<typename T>
-struct IsLValueReference<T&&> : False_Type {};
+struct SameType<T, T> : TrueType {};
+
+template<typename A, typename B>
+constexpr auto same_as = SameType<A, B>::value;
 
 template<typename T>
-struct IsRValueReference : False_Type {};
+struct IsLValueReference : FalseType {};
 template<typename T>
-struct IsRValueReference<T&> : False_Type {};
+struct IsLValueReference<T&> : TrueType {};
 template<typename T>
-struct IsRValueReference<T&&> : True_Type {};
+struct IsLValueReference<T&&> : FalseType {};
+
+template<typename T>
+struct IsRValueReference : FalseType {};
+template<typename T>
+struct IsRValueReference<T&> : FalseType {};
+template<typename T>
+struct IsRValueReference<T&&> : TrueType {};
 
 }
 
