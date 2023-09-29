@@ -110,7 +110,6 @@ template<typename T, typename E>
 Result<T,E> result_err(E&& e){
 	return Result<T,E>(forward<E>(e));
 }
-
 }
 
 

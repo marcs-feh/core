@@ -17,6 +17,7 @@
 #include "tests/array.cpp"
 #include "tests/mat.cpp"
 #include "tests/result.cpp"
+#include "tests/optional.cpp"
 #include "tests/libc_allocator.cpp"
 #include "tests/bump_allocator.cpp"
 #include "tests/pool_allocator.cpp"
@@ -29,10 +30,11 @@ int main(){
 		+ test_View()
 		+ test_Array()
 		+ test_Mat()
+		+ test_Optional()
+		+ test_Result()
 		+ test_LibCAllocator()
 		+ test_BumpAllocator()
 		+ test_PoolAllocator()
-		+ test_Result()
 	;
 
 	return s;

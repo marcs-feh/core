@@ -16,9 +16,10 @@ struct Optional {
 	constexpr
 	bool ok() const { return _has_val; }
 
-	void destroy(){
+	auto&& destroy(){
 		_has_val = false;
-		&_data->~T();
+		_data.~T();
+		return *this;
 	}
 
 	T get() const {
@@ -49,8 +50,8 @@ struct Optional {
 			_data = data;
 		} else {
 			new (&data) T(data);
-			_has_val = true;
 		}
+		_has_val = true;
 	}
 
 	void operator=(T&& data){
@@ -58,14 +59,19 @@ struct Optional {
 			_data = data;
 		} else {
 			new (&data) T(move(data));
-			_has_val = true;
 		}
+		_has_val = true;
 	}
 };
 
 template<typename U>
 auto make_optional(U&& v){
 	return Optional<U>(forward<U>(v));
+}
+
+template<typename U>
+auto make_nil(){
+	return Optional<U>();
 }
 
 }
