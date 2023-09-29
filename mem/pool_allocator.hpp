@@ -12,10 +12,10 @@ struct PoolAllocator : public Allocator {
 	struct FreeListNode {
 		FreeListNode* next = nullptr;
 	};
-	byte* _buf;
-	usize _buf_len;
-	usize _chunk_size;
-	FreeListNode* _head;
+	byte* _buf = nullptr;
+	usize _buf_len = 0;
+	usize _chunk_size = 0;
+	FreeListNode* _head = nullptr;
 
 	usize chunk_count() const {
 		return _buf_len / _chunk_size;
@@ -87,9 +87,10 @@ struct PoolAllocator : public Allocator {
 		return false;
 	}
 
-	PoolAllocator() : _buf{nullptr}, _buf_len{0}, _chunk_size{0}, _head{nullptr} {}
+	PoolAllocator(){}
 
-	PoolAllocator(Slice<byte> storage, usize chunk_size, usize chunk_align = max_align) {
+	static PoolAllocator make(Slice<byte> storage, usize chunk_size, usize chunk_align = max_align) {
+		PoolAllocator al;
 		uintptr initial_base = (uintptr)storage.raw_ptr();
 		uintptr base         = align_forward(initial_base, chunk_align);
 
@@ -99,12 +100,13 @@ struct PoolAllocator : public Allocator {
 		Assert(chunk_size >= sizeof(FreeListNode));
 		Assert(true_length >= chunk_size);
 
-		_buf        = storage.raw_ptr();
-		_buf_len    = true_length;
-		_chunk_size = true_chunk_size;
-		_head       = nullptr;
+		al._buf        = storage.raw_ptr();
+		al._buf_len    = true_length;
+		al._chunk_size = true_chunk_size;
+		al._head       = nullptr;
 
-		free_all();
+		al.free_all();
+		return al;
 	}
 };
 

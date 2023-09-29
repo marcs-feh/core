@@ -23,7 +23,7 @@ struct Result {
 	}
 
 	E error() const {
-		panic_assert(_has_val, "Attempt to error() from Result(Data) ");
+		panic_assert(!_has_val, "Attempt to error() from Result(Data) ");
 		return _error;
 	}
 
@@ -37,60 +37,79 @@ struct Result {
 
 	Result(){}
 
+	explicit
 	Result(const T& data) : _data(data) {
 		_has_val = true;
 	}
 
+	explicit
 	Result(T&& data) : _data(move(data)) {
 		_has_val = true;
 	}
 
-	void operator=(const T& data){
+	void operator=(const T& val){
 		if(_has_val){
-			_data = data;
+			_data = val;
 		} else {
-			&_error->~E();
-			new (&data) T(data);
+			_error.~E();
+			new (&_data) T(val);
 		}
+		_has_val = true;
 	}
 
-	void operator=(T&& data){
+	void operator=(T&& val){
 		if(_has_val){
-			_data = move(data);
+			_data = move(val);
 		} else {
-			&_error->~E();
-			new (&data) T(move(data));
+			_error.~E();
+			new (&_data) T(move(val));
 		}
+		_has_val = true;
 	}
 
+	explicit
 	Result(const E& error): _error(error){
 		_has_val = false;
 	}
 
+	explicit
 	Result(E&& error): _error(move(error)){
 		_has_val = false;
 	}
 
 	void operator=(const E& error){
 		if(_has_val){
-			&_data->~E();
-			new (&error) T(error);
+		_data.~T();
+			new (&error) E(error);
 		} else {
 			_error = error;
 		}
+		_has_val = false;
 	}
 
 	void operator=(E&& error){
 		if(_has_val){
-			&_data->~E();
-			new (&error) T(move(error));
+		_data.~T();
+			new (&error) E(move(error));
+			_has_val = false;
 		} else {
 			_error = move(error);
 		}
+		_has_val = false;
 	}
 
 	static_assert(!typing::same_as<T, E>, "Error and Data type cannot be the same");
 };
+
+template<typename T, typename E>
+Result<T,E> result_ok(T&& v){
+	return Result<T,E>(forward<T>(v));
+}
+
+template<typename T, typename E>
+Result<T,E> result_err(E&& e){
+	return Result<T,E>(forward<E>(e));
+}
 
 }
 

@@ -16,6 +16,7 @@
 #include "tests/view.cpp"
 #include "tests/array.cpp"
 #include "tests/mat.cpp"
+#include "tests/result.cpp"
 #include "tests/libc_allocator.cpp"
 #include "tests/bump_allocator.cpp"
 #include "tests/pool_allocator.cpp"
@@ -31,16 +32,10 @@ int main(){
 		+ test_LibCAllocator()
 		+ test_BumpAllocator()
 		+ test_PoolAllocator()
+		+ test_Result()
 	;
-
-	auto al = LibCAllocator();
-	auto arr = DynArray<int>(&al);
-
-	print(arr.data.raw_ptr());
-	for(usize i = 0; i < 60; i += 1){
-		print(arr.append(i * 3), arr.cap());
-	}
-	print(arr.data.raw_ptr());
 
 	return s;
 }
+
+// TODO: revise structure of result and maybe

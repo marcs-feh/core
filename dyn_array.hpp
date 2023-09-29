@@ -4,8 +4,6 @@
 #include "mem/allocator.hpp"
 #include "slice.hpp"
 
-#include <optional>
-
 namespace core {
 template<typename T>
 struct DynArray {
@@ -62,18 +60,18 @@ struct DynArray {
 
 	DynArray(){}
 
-	DynArray(Allocator* al) {
-		alloc = al;
-		Assert(alloc != nullptr);
+	static DynArray make(Allocator* al) {
+		DynArray arr;
+		arr.alloc = al;
+		Assert(arr.alloc != nullptr);
 
-		T* data_ptr = static_cast<T*>(alloc->alloc(default_size * sizeof(T)));
+		T* data_ptr = static_cast<T*>(arr.alloc->alloc(default_size * sizeof(T)));
 		Assert(data_ptr != nullptr);
-		data = Slice<T>(data_ptr, default_size);
-
+		arr.data = Slice<T>(data_ptr, default_size);
 	}
 
-	~DynArray(){
-		destroy(*alloc, data);
+	static void destroy(DynArray arr){
+		destroy(*arr.alloc, arr.data);
 	}
 
 	static constexpr usize min_size = 4;

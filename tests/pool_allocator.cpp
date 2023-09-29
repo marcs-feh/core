@@ -12,7 +12,7 @@ uint test_PoolAllocator(){
 	auto mem = Slice<byte>(new byte[n], n); 
 	defer(delete[] mem.raw_ptr());
 
-	auto al = PoolAllocator(mem, c);
+	auto al = PoolAllocator::make(mem, c);
 	Tp(al._buf != nullptr);
 	Tp(al._buf_len <= 250);
 	Tp(al._chunk_size == align_forward(c, max_align));
