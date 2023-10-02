@@ -4,7 +4,6 @@
 #include <iostream>
 #include <utility>
 
-
 #include "types.hpp"
 #include "mat.hpp"
 #include "array.hpp"

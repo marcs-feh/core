@@ -7,8 +7,7 @@
 
 // TODO: extra safety for free()
 namespace core{
-
-struct PoolAllocator : public Allocator {
+struct PoolAllocator {
 	struct FreeListNode {
 		FreeListNode* next = nullptr;
 	};
@@ -21,7 +20,7 @@ struct PoolAllocator : public Allocator {
 		return _buf_len / _chunk_size;
 	}
 
-	void free_all() override {
+	void free_all(){
 		usize count = chunk_count();
 
 		for(usize i = 0; i < count; i += 1){
@@ -32,7 +31,7 @@ struct PoolAllocator : public Allocator {
 		}
 	}
 
-	void free(void *p) override {
+	void free(void *p){
 		if (!has_address(p)) {
 			debug_assert(p == nullptr,
 				"Tried to free non-null pointer that is "
@@ -45,7 +44,7 @@ struct PoolAllocator : public Allocator {
 		_head = node;
 	}
 
-	void* alloc(usize nbytes) override {
+	void* alloc(usize nbytes){
 		void* p = alloc_undef(nbytes);
 		if(p != nullptr){
 			mem_set(p, nbytes, 0);
@@ -53,7 +52,7 @@ struct PoolAllocator : public Allocator {
 		return p;
 	}
 
-	void* alloc_undef(usize nbytes) override {
+	void* alloc_undef(usize nbytes){
 		if(nbytes == 0){ return nullptr; }
 		auto node = _head;
 		if(node == nullptr){
@@ -70,7 +69,7 @@ struct PoolAllocator : public Allocator {
 		return node;
 	}
 
-	bool has_address(void *p) override {
+	bool has_address(void *p){
 		void* start = _buf;
 		void* end = &_buf[_buf_len];
 		bool in_range = (p >= start) && (p < end);
@@ -108,7 +107,17 @@ struct PoolAllocator : public Allocator {
 		al.free_all();
 		return al;
 	}
+
 };
+
+// constexpr auto pool_alloc_vtbl = allocator_vtable<PoolAllocator>;
+//
+// Allocator as_allocator(PoolAllocator* al){
+// 	return Allocator {
+// 		.vtbl = &pool_alloc_vtbl,
+// 		.impl = (void*)al,
+// 	};
+// }
 
 }
 

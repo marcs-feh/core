@@ -11,12 +11,12 @@
 #include "mem/allocator.hpp"
 
 namespace core{
-struct BumpAllocator : public Allocator {
+struct BumpAllocator {
 	uintptr _cap = 0;
 	uintptr _offset = 0;
 	byte* _data = nullptr;
 
-	void* alloc(usize nbytes) override {
+	void* alloc(usize nbytes){
 		void* p = alloc_undef(nbytes);
 		if(p != nullptr){
 			mem_set(p, nbytes, 0);
@@ -24,7 +24,7 @@ struct BumpAllocator : public Allocator {
 		return p;
 	}
 
-	void* alloc_undef(usize nbytes) override {
+	void* alloc_undef(usize nbytes){
 		if(nbytes == 0){ return nullptr; }
 		const auto base = (uintptr)_data;
 		uintptr pad = align_forward(base + _offset, core::max_align) - (base + _offset);
@@ -41,18 +41,18 @@ struct BumpAllocator : public Allocator {
 		return p;
 	}
 
-	bool has_address(void* p) override {
+	bool has_address(void* p){
 		auto base = (uintptr)_data;
 		auto limit = base + (uintptr)_cap;
 
 		return ptr_in_range(base, (uintptr)p, limit);
 	}
 
-	void free(void*) override {
+	void free(void*){
 		panic("free() not supported");
 	}
 
-	void free_all() override {
+	void free_all(){
 		_offset = 0;
 	}
 
@@ -63,6 +63,7 @@ struct BumpAllocator : public Allocator {
 		return b;
 	}
 };
+
 }
 
 

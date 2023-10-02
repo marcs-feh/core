@@ -5,10 +5,15 @@ CXXFLAGS ?= -O0 -march=native -pipe -Wall -Wextra -g -fsanitize=address -DRELEAS
 
 CXXFLAGS := $(CXXFLAGS) -I. -fno-exceptions -fno-strict-aliasing -std=c++20
 
-.PHONY: run clean
+INTERFACER := python tools/interfacer/interfacer.py
+
+.PHONY: run clean codegen
 
 run: main.bin
 	@./main.bin
+
+codegen:
+	 $(INTERFACER) mem/internal/allocator.yaml -guard:none -out:mem/internal/allocator_interface.hpp
 
 main.bin: main.cpp *.hpp tests/*
 	$(CXX) $(CXXFLAGS) main.cpp -o main.bin

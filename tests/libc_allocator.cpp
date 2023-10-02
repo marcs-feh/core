@@ -5,7 +5,8 @@ uint test_LibCAllocator(){
 	Test_Begin("LibC Allocator");
 	using namespace core;
 
-	LibCAllocator al;
+	LibCAllocator c;
+	auto al = make_allocator(&c);
 	{
 		int* p = make<int>(al);
 		Tp(p != nullptr);

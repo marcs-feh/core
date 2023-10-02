@@ -1,8 +1,10 @@
 #include "utils.hpp"
+
 #include "defer.hpp"
 #include "assert.hpp"
 #include "context.hpp"
 #include "dyn_array.hpp"
+#include "mem/allocator.hpp"
 #include "mem/bump_allocator.hpp"
 
 #include "slice.hpp"
@@ -38,6 +40,8 @@ int main(){
 	;
 
 	return s;
+
+
 }
 
 // TODO: revise structure of result and maybe

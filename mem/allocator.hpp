@@ -19,17 +19,9 @@
 // Required so the compiler stops crying about it
 void* operator new(usize, void*) noexcept;
 
+
 namespace core {
-
-struct Allocator {
-	virtual void* alloc(usize nbytes) = 0;
-	virtual void* alloc_undef(usize nbytes) = 0;
-	virtual void free(void* p) = 0;
-	virtual void free_all() = 0;
-	virtual bool has_address(void* p) = 0;
-	// void* realloc(void* p, usize old_size, usize new_size);
-};
-
+#include "internal/allocator_interface.hpp"
 template<typename T>
 T* make(Allocator& al){
 	T* p = static_cast<T*>(al.alloc(sizeof(T)));
@@ -99,3 +91,62 @@ void destroy(Allocator& al, Slice<T> s){
 }
 
 #endif /* Include guard */
+
+// struct Allocator {
+// 	struct VTable {
+// 		using Alloc       = void* (*)(void* impl, usize nbytes);
+// 		using AllocUnsafe = void* (*)(void* impl, usize nbytes);
+// 		using Free        = void (*)(void* impl, void* p);
+// 		using FreeAll     = void (*)(void* impl);
+// 		using HasAddress  = bool (*)(void* impl, void* p);
+//
+// 		Alloc alloc;
+// 		Alloc alloc_undef;
+// 		Free free;
+// 		FreeAll free_all;
+// 		HasAddress has_address;
+// 	};
+// 	const VTable* const vtbl;
+// 	void* const impl;
+//
+// 	// SYNTAX SUGAR BELOW
+// 	void* alloc(usize nbytes){ return vtbl->alloc(impl, nbytes); }
+// 	void* alloc_undef(usize nbytes){ return vtbl->alloc_undef(impl, nbytes); }
+// 	void free(void* p){ return vtbl->free(impl, p); }
+// 	void free_all(){ return vtbl->free_all(impl); }
+// 	bool has_address(void* p){ return vtbl->has_address(impl, p); }
+// };
+//
+// template<typename T>
+// constexpr Allocator::VTable allocator_vtable = {
+// 	.alloc = [](void* impl, usize n) -> void*{
+// 		auto al = reinterpret_cast<T*>(impl);
+// 		return al->alloc(n);
+// 	},
+// 	.alloc_undef = [](void* impl, usize n) -> void* {
+// 		auto al = reinterpret_cast<T*>(impl);
+// 		return al->alloc_undef(n);
+// 	},
+// 	.free = [](void* impl, void* p) -> void {
+// 		auto al = reinterpret_cast<T*>(impl);
+// 		return al->free(p);
+// 	},
+// 	.free_all = [](void* impl) -> void {
+// 		auto al = reinterpret_cast<T*>(impl);
+// 		return al->free_all();
+// 	},
+// 	.has_address = [](void* impl, void* p) -> bool {
+// 		auto al = reinterpret_cast<T*>(impl);
+// 		return al->has_address( p);
+// 	},
+// };
+//
+// template<typename Impl>
+// auto as_allocator(Impl* impl){
+// 	constexpr auto vtbl = &allocator_vtable<Impl>;
+// 	return Allocator{
+// 		.vtbl = vtbl,
+// 		.impl = (void*)impl,
+// 	};
+// }
+

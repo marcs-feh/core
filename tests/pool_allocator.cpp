@@ -12,10 +12,11 @@ uint test_PoolAllocator(){
 	auto mem = Slice<byte>(new byte[n], n); 
 	defer(delete[] mem.raw_ptr());
 
-	auto al = PoolAllocator::make(mem, c);
-	Tp(al._buf != nullptr);
-	Tp(al._buf_len <= 250);
-	Tp(al._chunk_size == align_forward(c, max_align));
+	auto pool_al = PoolAllocator::make(mem, c);
+	auto al = make_allocator(&pool_al);
+	Tp(pool_al._buf != nullptr);
+	Tp(pool_al._buf_len <= 250);
+	Tp(pool_al._chunk_size == align_forward(c, max_align));
 
 	{
 		auto p = make_n<i32>(al, 5);
@@ -35,16 +36,16 @@ uint test_PoolAllocator(){
 		Tp(p.raw_ptr() == nullptr);
 	}
 
-	for(usize i = 0, n = al.chunk_count(); i < n; i += 1){
-		al.alloc(1);
+	for(usize i = 0, n = pool_al.chunk_count(); i < n; i += 1){
+		pool_al.alloc(1);
 	}
-	Tp(al.alloc(1) == nullptr);
+	Tp(pool_al.alloc(1) == nullptr);
 
-	al.free_all();
+	pool_al.free_all();
 
 	bool ok = true;
-	for(usize i = 0, n = al.chunk_count(); i < n; i += 1){
-		ok = ok && (al.alloc(1) != nullptr);
+	for(usize i = 0, n = pool_al.chunk_count(); i < n; i += 1){
+		ok = ok && (pool_al.alloc(1) != nullptr);
 	}
 	Tp(ok);
 
