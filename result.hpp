@@ -10,7 +10,7 @@ template<typename T, typename E>
 struct Result {
 	union {
 		T _data;
-		E _error = {0};
+		E _error;
 	};
 	bool _has_val = false;
 
@@ -35,7 +35,7 @@ struct Result {
 		return _data;
 	}
 
-	Result(){}
+	Result() : _error() {}
 
 	explicit
 	Result(const T& data) : _data(data) {
@@ -96,6 +96,14 @@ struct Result {
 			_error = move(error);
 		}
 		_has_val = false;
+	}
+
+	~Result(){
+		if(_has_val){
+			_data.~T();
+		} else {
+			_error.~E();
+		}
 	}
 
 	static_assert(!typing::same_as<T, E>, "Error and Data type cannot be the same");

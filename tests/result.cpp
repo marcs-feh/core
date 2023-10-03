@@ -1,5 +1,6 @@
 #include "result.hpp"
 #include "test_urself.hpp"
+#include "dummy.hpp"
 
 uint test_Result(){
 	Test_Begin("Result");
@@ -31,6 +32,19 @@ uint test_Result(){
 	good = int(0);
 	Tp(good.ok());
 	Tp(good.get_or(1) == 0);
+
+	{
+		A::reset(); B::reset();
+		auto r = Result<A, B>();
+		T_All(A::ctor == 0, B::ctor == 1);
+		r = A();
+		T_All(A::ctor == 1, A::move_ctor == 1, A::move_assign == 0);
+		r = A();
+		T_All(A::ctor == 2, A::move_ctor == 1, A::move_assign == 1);
+		A::reset();
+		r = B();
+		T_All(A::dtor == 1, B::ctor == 2);
+	}
 
 	Test_End();
 }
