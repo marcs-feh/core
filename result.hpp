@@ -43,7 +43,7 @@ struct Result {
 	}
 
 	explicit
-	Result(T&& data) : _data(move(data)) {
+	Result(T&& data) : _data(core::move(data)) {
 		_has_val = true;
 	}
 
@@ -59,10 +59,10 @@ struct Result {
 
 	void operator=(T&& val){
 		if(_has_val){
-			_data = move(val);
+			_data = core::move(val);
 		} else {
 			_error.~E();
-			new (&_data) T(move(val));
+			new (&_data) T(core::move(val));
 		}
 		_has_val = true;
 	}
@@ -73,7 +73,7 @@ struct Result {
 	}
 
 	explicit
-	Result(E&& error): _error(move(error)){
+	Result(E&& error): _error(core::move(error)){
 		_has_val = false;
 	}
 
@@ -90,10 +90,10 @@ struct Result {
 	void operator=(E&& error){
 		if(_has_val){
 		_data.~T();
-			new (&error) E(move(error));
+			new (&error) E(core::move(error));
 			_has_val = false;
 		} else {
-			_error = move(error);
+			_error = core::move(error);
 		}
 		_has_val = false;
 	}

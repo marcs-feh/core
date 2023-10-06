@@ -68,7 +68,7 @@ constexpr bool is_rvalue_ref = typing::IsRValueReference<T>::value;
 // Cast x to rvalue reference
 template<typename T>
 constexpr RemoveReference<T>&& move(T&& x){
-	typedef RemoveReference<T>&& Rv;
+	using Rv = RemoveReference<T>&&;
 	return static_cast<Rv>(x);
 }
 
@@ -91,9 +91,9 @@ constexpr T&& forward(RemoveReference<T>&& x){
 template<typename T>
 constexpr
 void swap(T& a, T& b){
-	T t = move(b);
-	b   = move(a);
-	a   = move(t);
+	T t = core::move(b);
+	b   = core::move(a);
+	a   = core::move(t);
 }
 
 // Replaces x with val and returns the old value of x

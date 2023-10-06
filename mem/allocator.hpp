@@ -19,7 +19,6 @@
 // Required so the compiler stops crying about it
 void* operator new(usize, void*) noexcept;
 
-
 namespace core {
 
 #include "internal/allocator_interface.hpp"

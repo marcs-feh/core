@@ -41,7 +41,7 @@ struct Optional {
 		_has_val = true;
 	}
 
-	Optional(T&& data) : _data(move(data)) {
+	Optional(T&& data) : _data(core::move(data)) {
 		_has_val = true;
 	}
 
@@ -58,9 +58,15 @@ struct Optional {
 		if(_has_val){
 			_data = data;
 		} else {
-			new (&data) T(move(data));
+			new (&data) T(core::move(data));
 		}
 		_has_val = true;
+	}
+
+	~Optional(){
+		if(_has_val){
+			_data.~T();
+		}
 	}
 };
 

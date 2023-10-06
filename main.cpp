@@ -27,6 +27,10 @@
 using namespace core;
 
 int main(){
+	auto lc = LibCAllocator();
+	auto al = make_allocator(&lc);
+
+	auto arr = make_dyn_array<int>(al).get();
 	uint s =
 		+ test_Slice()
 		+ test_View()
