@@ -42,8 +42,6 @@ int main(){
 	;
 
 	return s;
-
-
 }
 
 // TODO: revise structure of result and maybe

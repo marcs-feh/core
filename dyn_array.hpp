@@ -1,5 +1,5 @@
 ///
-/// A Dynamic Array is a growable collection of elements of type T.
+/// A Dynamic Array is a growable linear collection of elements of type T.
 ///
 
 #ifndef _dyn_array_hpp_include_
@@ -14,9 +14,9 @@ namespace core {
 template<typename T>
 struct DynArray {
 	Allocator _alloc = {0,0};
-	usize _length = 0;
-	usize _capacity = 0;
-	T* _data;
+	usize _length    = 0;
+	usize _capacity  = 0;
+	T* _data         = nullptr;
 
 	constexpr
 	usize len() const {
@@ -52,6 +52,28 @@ struct DynArray {
 		return _length;
 	}
 
+	template<typename U>
+	usize insert(usize idx, U&& e){
+		if(idx > _length){
+			debug_panic("Index out of bounds");
+			return _length;
+		}
+
+		auto old_len = _length;
+		if(append(forward<U>(e)) == old_len){
+			debug_panic("Could not insert element");
+			return _length;
+		}
+
+		// Insert at end is same as appending
+
+		for(usize i = _length - 1; i > idx; i -= 1){
+			core::swap(_data[i], _data[i-1]);
+		}
+
+		return _length;
+	}
+
 	// TODO: realloc()
 	bool _expand_cap(usize new_size){
 		T* new_data = static_cast<T*>(_alloc.alloc(new_size * sizeof(T)));
@@ -71,6 +93,15 @@ struct DynArray {
 		_data = new_data;
 		_capacity = new_size;
 		return true;
+	}
+
+	Slice<T> slice(usize from, usize to){
+		auto s = Slice<T>(_data, _length);
+		return s.slice(from, to);
+	}
+
+	Slice<T> as_slice(){
+		return Slice<T>(_data, _length);
 	}
 
 	DynArray(){}
@@ -113,22 +144,22 @@ struct DynArray {
 		usize x = (n * 1.5) + 1;
 		return align_forward(x, max_align);
 	};
+
+	bool operator==(DynArray<T> const& arr) const {
+		if(_length != arr._length){ return false; }
+
+		for(usize i = 0; i < _length; i += 1){
+			if(_data[i] != arr._data[i]){ return false; }
+		}
+
+		return true;
+	}
+
+	bool operator!=(DynArray<T> const& arr) const {
+		return ! operator==(arr);
+	}
 };
 
-// TODO: use actual error type
-// template<typename T>
-// Result<DynArray<T>, int> make_dyn_array(Allocator al) {
-// 	DynArray<T> arr;
-// 	arr.alloc = al;
-// 	// Assert(bool(arr.alloc));
-//
-// 	T* data_ptr = static_cast<T*>(arr.alloc.alloc(DynArray<T>::default_size * sizeof(T)));
-// 	Assert(data_ptr != nullptr);
-// 	arr.data = Slice<T>(data_ptr, DynArray<T>::default_size);
-//
-// 	return result_ok<DynArray<T>, int>(core::move(arr));
-// }
 }
-
 
 #endif /* Include guard */

@@ -7,11 +7,21 @@
 #include "types.hpp"
 #include "mat.hpp"
 #include "array.hpp"
+#include "slice.hpp"
 
 namespace {
 
 template<typename U>
 static void print_arr(U&& v){
+	std::cout << "[ ";
+	for(usize i = 0; i < v.len(); i += 1){
+		std::cout << v[i] << ' ';
+	}
+	std::cout << "]";
+}
+
+template<typename U>
+static void print_slice(U&& v){
 	std::cout << "[ ";
 	for(usize i = 0; i < v.len(); i += 1){
 		std::cout << v[i] << ' ';
@@ -46,6 +56,11 @@ void print_rec(const core::CMat<T, W, H>& x){
 template<typename T, usize N>
 void print_rec(const core::Array<T,N>& x){
 	print_arr(x);
+}
+
+template<typename T>
+void print_rec(const core::Slice<T>& x){
+	print_slice(x);
 }
 
 template<typename T, typename ...Args>
