@@ -62,7 +62,6 @@ struct PoolAllocator {
 		if(nbytes == 0){ return nullptr; }
 		auto node = _head;
 		if(node == nullptr){
-			debug_panic("Out of memory");
 			return nullptr;
 		}
 
@@ -113,15 +112,6 @@ struct PoolAllocator {
 	}
 
 };
-
-// constexpr auto pool_alloc_vtbl = allocator_vtable<PoolAllocator>;
-//
-// Allocator as_allocator(PoolAllocator* al){
-// 	return Allocator {
-// 		.vtbl = &pool_alloc_vtbl,
-// 		.impl = (void*)al,
-// 	};
-// }
 
 }
 

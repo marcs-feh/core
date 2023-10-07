@@ -38,7 +38,6 @@ uint test_DynArray(){
 		Tp(arr.insert(0, 6) == 4);
 		Tp(arr.insert(1, 9) == 5);
 		Tp(arr == b)
-		print(arr.as_slice());
 	}
 
 

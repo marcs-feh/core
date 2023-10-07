@@ -30,7 +30,7 @@ struct BumpAllocator {
 		uintptr pad = align_forward(base + _offset, core::max_align) - (base + _offset);
 
 		if((_offset + pad + nbytes) >= _cap){
-			debug_panic("Out of memory");
+			// debug_panic("Out of memory");
 			return nullptr;
 		}
 
@@ -49,7 +49,7 @@ struct BumpAllocator {
 	}
 
 	void free(void*){
-		panic("free() not supported");
+		debug_panic("free() not supported");
 	}
 
 	void free_all(){

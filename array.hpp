@@ -107,11 +107,11 @@ bool operator==(const Array<T,N>& a, const Array<T,N>& b){
 	return true;
 }
 
-// template<typename T, usize N>
-// constexpr
-// bool operator!=(const Array<T,N>& a, const Array<T,N>& b){
-// 	return !(a == b);
-// }
+template<typename T, usize N>
+constexpr
+bool operator!=(const Array<T,N>& a, const Array<T,N>& b){
+	return !(a == b);
+}
 
 /// Scalar operations ///
 
@@ -159,17 +159,17 @@ namespace {
 
 template<typename T, usize N, usize I, typename U>
 constexpr
-void fillArrayWithParamPack(Array<T, N>& v, U&& elem){
+void fill_arr_with_param_pack(Array<T, N>& v, U&& elem){
 	static_assert(I < N, "Out of bounds");
 	v[I] = static_cast<T>(elem);
 }
 
 template<typename T, usize N, usize I = 0, typename U,typename... Args>
 constexpr
-void fillArrayWithParamPack(Array<T, N>& v, U&& elem, Args&& ...indices){
+void fill_arr_with_param_pack(Array<T, N>& v, U&& elem, Args&& ...indices){
 	static_assert(I < N, "Out of bounds");
 	v[I] = static_cast<T>(elem);
-	fillArrayWithParamPack<T, N, I+1>(v, forward<Args>(indices)...);
+	fill_arr_with_param_pack<T, N, I+1>(v, forward<Args>(indices)...);
 }
 
 }
@@ -189,7 +189,7 @@ auto swizzle(const Array<T, N>& v, Index&& ...indices){
 	Array<usize, L> idxv;
 	Array<T, L> res;
 
-	fillArrayWithParamPack(idxv, indices...);
+	fill_arr_with_param_pack(idxv, indices...);
 	for(usize i = 0; i < L; i += 1){
 		res[i] = v[idxv[i]];
 	}
