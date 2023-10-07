@@ -56,11 +56,9 @@ struct BumpAllocator {
 		_offset = 0;
 	}
 
-	static BumpAllocator make(Slice<byte> buf){
-		BumpAllocator b;
-		b._cap = buf.len();
-		b._data = buf.raw_ptr();
-		return b;
+	BumpAllocator(Slice<byte> buf){
+		_cap = buf.len();
+		_data = buf.raw_ptr();
 	}
 };
 

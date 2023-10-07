@@ -9,61 +9,88 @@ namespace core {
 
 template<typename T>
 struct DynArray {
-	Allocator alloc  = {0};
-	usize length     = 0;
-	Slice<T> data    = Slice<T>();
+	Allocator _alloc = {0,0};
+	usize _length = 0;
+	Slice<T> _data = Slice<T>();
 
 	constexpr
 	usize len() const {
-		return length;
+		return _length;
 	}
 
 	constexpr
 	usize cap() const {
-		return data.len();
+		return _data.len();
 	}
 
 	template<typename U>
 	usize append(U&& e){
-		if((length + 1) >= cap()){
+		if((_length + 1) >= cap()){
 			bool ok = _expand_cap(increase_cap(cap()));
 			if(!ok){
 				debug_panic("Could not append element");
-				return length;
+				return _length;
 			}
 		}
 
-		T* p = data.raw_ptr();
-		new (&p[length]) T(static_cast<T>(forward<U>(e)));
-		length += 1;
-		return length;
+		T* p = _data.raw_ptr();
+		new (&p[_length]) T(static_cast<T>(forward<U>(e)));
+		_length += 1;
+		return _length;
 	}
 
 	// TODO: realloc()
 	bool _expand_cap(usize new_size){
 		// panic_assert(new_size > cap(), "Cannot _expand_cap() to a smaller capacity");
-		T* new_data = static_cast<T*>(alloc.alloc(new_size * sizeof(T)));
+		T* new_data = static_cast<T*>(_alloc.alloc(new_size * sizeof(T)));
 
 		if(new_data == nullptr){
 			return false;
 		}
 
-		T* old_data = data.raw_ptr();
+		T* old_data = _data.raw_ptr();
 
-		for(usize i = 0; i < length; i += 1){
+		for(usize i = 0; i < _length; i += 1){
 			new (&new_data[i]) T(core::move(old_data[i]));
 		}
 
-		destroy(alloc, data);
+		destroy(_alloc, _data);
 
-		data = Slice<T>(new_data, new_size);
+		_data = Slice<T>(new_data, new_size);
 		return true;
 	}
 
 	DynArray(){}
 
+	DynArray(Allocator al) {
+		_alloc = al;
+
+		T* data_ptr = static_cast<T*>(_alloc.alloc(DynArray<T>::default_size * sizeof(T)));
+
+		Assert(data_ptr != nullptr);
+		// *this = DynArray();
+		_data = Slice<T>(data_ptr, DynArray<T>::default_size);
+	}
+
+	// TODO: allow shallow copies?
+	DynArray(DynArray const&) = delete;
+	void operator=(DynArray const&) = delete;
+
+	DynArray(DynArray&& a){
+		_data = core::exchange(a._data, Slice<T>());
+		_alloc = core::exchange(a._alloc, Allocator());
+		_length = core::exchange(a._length, 0);
+	}
+
+	void operator=(DynArray&& a){
+		destroy(_alloc, _data);
+		_data = core::exchange(a._data, Slice<T>());
+		_alloc = core::exchange(a._alloc, Allocator());
+		_length = core::exchange(a._length, 0);
+	}
+
 	~DynArray(){
-		destroy(alloc, data);
+		destroy(_alloc, _data);
 	}
 
 	static constexpr usize min_size = 4;
@@ -74,18 +101,19 @@ struct DynArray {
 	};
 };
 
-template<typename T>
-Result<DynArray<T>, AllocError> make_dyn_array(Allocator al) {
-	DynArray<T> arr;
-	arr.alloc = al;
-	Assert(bool(arr.alloc));
-
-	T* data_ptr = static_cast<T*>(arr.alloc.alloc(DynArray<T>::default_size * sizeof(T)));
-	Assert(data_ptr != nullptr);
-	arr.data = Slice<T>(data_ptr, DynArray<T>::default_size);
-
-	return arr;
-}
+// TODO: use actual error type
+// template<typename T>
+// Result<DynArray<T>, int> make_dyn_array(Allocator al) {
+// 	DynArray<T> arr;
+// 	arr.alloc = al;
+// 	// Assert(bool(arr.alloc));
+//
+// 	T* data_ptr = static_cast<T*>(arr.alloc.alloc(DynArray<T>::default_size * sizeof(T)));
+// 	Assert(data_ptr != nullptr);
+// 	arr.data = Slice<T>(data_ptr, DynArray<T>::default_size);
+//
+// 	return result_ok<DynArray<T>, int>(core::move(arr));
+// }
 }
 
 

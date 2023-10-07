@@ -2,4 +2,6 @@
 *.bin
 *.out
 *.lib
+*.pyc
 *.exe
+__pycache__

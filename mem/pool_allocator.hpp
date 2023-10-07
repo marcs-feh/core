@@ -88,8 +88,7 @@ struct PoolAllocator {
 
 	PoolAllocator(){}
 
-	static PoolAllocator make(Slice<byte> storage, usize chunk_size, usize chunk_align = max_align) {
-		PoolAllocator al;
+	PoolAllocator(Slice<byte> storage, usize chunk_size, usize chunk_align = max_align) {
 		uintptr initial_base = (uintptr)storage.raw_ptr();
 		uintptr base         = align_forward(initial_base, chunk_align);
 
@@ -99,13 +98,12 @@ struct PoolAllocator {
 		Assert(chunk_size >= sizeof(FreeListNode));
 		Assert(true_length >= chunk_size);
 
-		al._buf        = storage.raw_ptr();
-		al._buf_len    = true_length;
-		al._chunk_size = true_chunk_size;
-		al._head       = nullptr;
+		_buf        = storage.raw_ptr();
+		_buf_len    = true_length;
+		_chunk_size = true_chunk_size;
+		_head       = nullptr;
 
-		al.free_all();
-		return al;
+		free_all();
 	}
 
 };

@@ -17,14 +17,14 @@ struct Result {
 	constexpr
 	bool ok() const { return _has_val; }
 
-	T get() const {
+	T get(){
 		panic_assert(_has_val, "Attempt to get() from Result(Error) ");
-		return _data;
+		return move(_data);
 	}
 
-	E error() const {
+	E error(){
 		panic_assert(!_has_val, "Attempt to error() from Result(Data) ");
-		return _error;
+		return move(_error);
 	}
 
 	template<typename U>
@@ -32,7 +32,7 @@ struct Result {
 		if(!_has_val){
 			return static_cast<T>(forward<U>(v));
 		}
-		return _data;
+		return move(_data);
 	}
 
 	Result() : _error() {}
