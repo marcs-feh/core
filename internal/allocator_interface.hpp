@@ -1,3 +1,5 @@
+#include "types.hpp"
+
 struct Allocator {
 struct VTable {
 void* (*alloc)(void * impl, usize nbytes);

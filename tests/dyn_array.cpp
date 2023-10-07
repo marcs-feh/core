@@ -30,6 +30,9 @@ uint test_DynArray(){
 		b.pop();
 		Tp(b.len() == 2);
 		Tp(arr != b);
+
+		while(b.pop() > 0){}
+		Tp(b.len() == 0);
 	}
 
 	{
@@ -38,6 +41,9 @@ uint test_DynArray(){
 		Tp(arr.insert(0, 6) == 4);
 		Tp(arr.insert(1, 9) == 5);
 		Tp(arr == b)
+	}
+
+	{
 	}
 
 
