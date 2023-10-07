@@ -23,14 +23,11 @@
 #include "tests/libc_allocator.cpp"
 #include "tests/bump_allocator.cpp"
 #include "tests/pool_allocator.cpp"
+#include "tests/dyn_array.cpp"
 
 using namespace core;
 
 int main(){
-	auto lc = LibCAllocator();
-	auto al = make_allocator(&lc);
-
-	auto arr = make_dyn_array<int>(al).get();
 	uint s =
 		+ test_Slice()
 		+ test_View()
@@ -41,6 +38,7 @@ int main(){
 		+ test_LibCAllocator()
 		+ test_BumpAllocator()
 		+ test_PoolAllocator()
+		+ test_DynArray()
 	;
 
 	return s;

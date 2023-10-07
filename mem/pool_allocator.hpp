@@ -1,3 +1,9 @@
+///
+/// AKA Chunk Allocator, this allocator has fast alloc/free operations and can
+/// free individually, however it can only allocate one specific chunk size,
+/// this is useful for objects of similar sizes but distinct lifetimes.
+///
+
 #ifndef _pool_allocator_hpp_include_
 #define _pool_allocator_hpp_include_
 

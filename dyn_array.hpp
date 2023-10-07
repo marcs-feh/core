@@ -1,3 +1,7 @@
+///
+/// A Dynamic Array is a growable collection of elements of type T.
+///
+
 #ifndef _dyn_array_hpp_include_
 #define _dyn_array_hpp_include_
 
@@ -11,7 +15,8 @@ template<typename T>
 struct DynArray {
 	Allocator _alloc = {0,0};
 	usize _length = 0;
-	Slice<T> _data = Slice<T>();
+	usize _capacity = 0;
+	T* _data;
 
 	constexpr
 	usize len() const {
@@ -20,7 +25,15 @@ struct DynArray {
 
 	constexpr
 	usize cap() const {
-		return _data.len();
+		return _capacity;
+	}
+
+	usize pop(){
+		if(_length == 0){ return 0; }
+
+		_data[_length - 1].~T();
+		_length -= 1;
+		return _length;
 	}
 
 	template<typename U>
@@ -33,7 +46,7 @@ struct DynArray {
 			}
 		}
 
-		T* p = _data.raw_ptr();
+		T* p = _data;
 		new (&p[_length]) T(static_cast<T>(forward<U>(e)));
 		_length += 1;
 		return _length;
@@ -41,14 +54,13 @@ struct DynArray {
 
 	// TODO: realloc()
 	bool _expand_cap(usize new_size){
-		// panic_assert(new_size > cap(), "Cannot _expand_cap() to a smaller capacity");
 		T* new_data = static_cast<T*>(_alloc.alloc(new_size * sizeof(T)));
 
 		if(new_data == nullptr){
 			return false;
 		}
 
-		T* old_data = _data.raw_ptr();
+		T* old_data = _data;
 
 		for(usize i = 0; i < _length; i += 1){
 			new (&new_data[i]) T(core::move(old_data[i]));
@@ -56,7 +68,8 @@ struct DynArray {
 
 		destroy(_alloc, _data);
 
-		_data = Slice<T>(new_data, new_size);
+		_data = new_data;
+		_capacity = new_size;
 		return true;
 	}
 
@@ -69,7 +82,8 @@ struct DynArray {
 
 		Assert(data_ptr != nullptr);
 		// *this = DynArray();
-		_data = Slice<T>(data_ptr, DynArray<T>::default_size);
+		_data = data_ptr;
+		_capacity = default_size;
 	}
 
 	// TODO: allow shallow copies?

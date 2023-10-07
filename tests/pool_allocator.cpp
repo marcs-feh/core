@@ -12,7 +12,7 @@ uint test_PoolAllocator(){
 	auto mem = Slice<byte>(new byte[n], n); 
 	defer(delete[] mem.raw_ptr());
 
-	auto pool_al = PoolAllocator::make(mem, c);
+	auto pool_al = PoolAllocator(mem, c);
 	auto al = make_allocator(&pool_al);
 	Tp(pool_al._buf != nullptr);
 	Tp(pool_al._buf_len <= 250);

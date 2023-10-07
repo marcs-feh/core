@@ -1,3 +1,9 @@
+///
+/// Optional type that can represent a value that *might* be null, using get()
+/// on a null value causes a panic. After you get() a value it is moved and the
+/// Optional is left in an undefined (but safe to destroy) state.
+///
+
 #ifndef _optional_hpp_include_
 #define _optional_hpp_include_
 
@@ -22,17 +28,17 @@ struct Optional {
 		return *this;
 	}
 
-	T get() const {
+	T get(){
 		panic_assert(_has_val, "Attempt to get() from Optional(nil)");
-		return _data;
+		return core::move(_data);
 	}
 
 	template<typename U>
-	T get_or(U&& v) const {
+	T get_or(U&& v) {
 		if(!_has_val){
 			return static_cast<T>(forward<U>(v));
 		}
-		return _data;
+		return core::move(_data);
 	}
 
 	Optional(){}

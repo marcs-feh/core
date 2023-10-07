@@ -10,7 +10,7 @@ uint test_BumpAllocator(){
 		auto buf = core::Slice(new byte[n], n);
 		defer(delete[] buf.raw_ptr());
 
-		auto bp = core::BumpAllocator::make(buf);
+		auto bp = core::BumpAllocator(buf);
 		auto al = core::make_allocator(&bp);
 		Tp(bp._offset == 0);
 		int* num = core::make<int>(al);
